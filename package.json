@@ -1,6 +1,6 @@
 {
   "name": "@coinminex/clickhouse-sql",
-  "version": "1.0.0-SNAPSHOT",
+  "version": "1.0.0",
   "description": "Yandex Clickhouse SQL Dialect interface",
   "main": "dist/index.js",
   "jsnext:main": "src/index.js",
@@ -43,6 +43,5 @@
   },
   "author": "Nickolay \"mbIkola\" Kharchevin <n.kharchevin@adtelligent.com>",
   "license": "SEE LICENSE IN LICENSE",
-  "dependencies": {
-  }
+  "dependencies": {}
 }
