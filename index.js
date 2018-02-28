@@ -1,4 +1,6 @@
-let dialect = require('dist/index.js');
+
+const dialect = require('./dist/index.js');
+
 module.exports = dialect.default;
 
 
