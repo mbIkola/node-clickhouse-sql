@@ -1,0 +1,44 @@
+{
+  "name": "@coinminex/clickhouse-sql",
+  "version": "1.0.0",
+  "description": "Yandex Clickhouse SQL Dialect interface",
+  "main": "src/index.js",
+  "jsnext:main": "src/index.js",
+  "module" : "src/index.js",
+
+  "scripts": {
+    "launch-docker-image": "docker run --rm -d -p 8123:8123 --name clickhouse-server yandex/clickhouse-server",
+    "stop-docker-image": "docker stop clickhouse-server",
+    "test": "nyc mocha --recursive ./test -R spec",
+    "report": "nyc report --reporter=lcov > coverage.lcov && codecov",
+    "simpletest": "mocha --recursive ./test -R spec",
+    "torturetest": "TORTURE=1 mocha -gc --recursive ./test -R spec"
+  },
+
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.vertamedia.com:crypto/node-clickhouse-sql.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.verta.host/",
+    "tag": "latest"
+  },
+
+  "keywords": [
+    "clickhouse",
+    "database",
+    "db",
+    "sql"
+  ],
+
+  "devDependencies": {
+    "bluebird": "^3.5.0",
+    "codecov": "^3.0.0",
+    "memwatch-next": "^0.3.0",
+    "mocha": "^5.0.1",
+    "nyc": "^11.4.1"
+  },
+
+  "author": "Nickolay \"mbIkola\" Kharchevin <n.kharchevin@adtelligent.com>",
+  "license": "SEE LICENSE IN LICENSE"
+}
