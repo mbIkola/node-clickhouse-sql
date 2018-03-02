@@ -1,6 +1,6 @@
 {
   "name": "@coinminex/clickhouse-sql",
-  "version": "1.0.3-SNAPSHOT",
+  "version": "1.0.3",
   "description": "Yandex Clickhouse SQL Dialect interface",
   "main": "index.js",
   "jsnext:main": "src/index.js",
