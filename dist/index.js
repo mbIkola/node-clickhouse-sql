@@ -376,7 +376,7 @@ function (_SQLObject3) {
         }).join();
       }
 
-      return value + '';
+      return this.value + '';
     }
   }]);
   return Value;
