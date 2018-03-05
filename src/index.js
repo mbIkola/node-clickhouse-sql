@@ -182,7 +182,7 @@ class Value extends SQLObject {
       return this.value.map(val => new Value(val)).join();
     }
 
-    return value + '';
+    return this.value + '';
   }
 }
 
