@@ -261,7 +261,7 @@ const TimeFunctions = {
   toHour: _curry_f('toHour'),
   toMinute: _curry_f('toMinute'),
   toTime: _curry_f('toTime'),
-
+  toDate: _curry_f('toDate'),
   toStartOfDay: _curry_f('toStartOfDay'),
   toStartOfMonth: _curry_f('toStartOfMonth'),
   toStartOfQuarter: _curry_f('toStartOfQuarter'),
