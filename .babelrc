@@ -1,15 +1,5 @@
 {
-  "plugins": [
-  ["@babel/plugin-transform-runtime", 
-    {
-        "helpers": true,
-        "polyfill" : true,
-        "regenerator": true
-    }
-  ],
-  "@babel/plugin-proposal-object-rest-spread"],
-
   "presets": [
-   ["@babel/preset-env", { "targets": {"node": "current"}}]
+    ["@babel/preset-env"]
   ]
 }

@@ -289,7 +289,6 @@ class Raw extends SQLObject {
 class Query extends SQLObject {
 }
 
-
 class Select extends Query {
   constructor() {
     super();
@@ -319,7 +318,7 @@ class Select extends Query {
 
   /**
    * @usage
-   *  q = selectBuilder->from('table0')->from(['table1', 'alias1'])->from({ 'table2' : 'alias2'})->toString()
+   *  q = selectBuilder->from('table0', ['table1', 'alias1'], { 'table2' : 'alias2'})->toString()
    *  assertEquals(q, "select * from table0, table1 as alias1, table2 as alias2");
    *
    * @param tables
@@ -333,7 +332,8 @@ class Select extends Query {
     tables = tables.map(table => {
       if (typeof table === "string") return [table, table];
       if (Array.isArray(table)) return table;
-      return [Object.keys(table)[0], Object.values(table)[1]]
+
+      return [Object.keys(table)[0], Object.values(table)[0]]
     });
 
     this.tables = tables;
@@ -362,7 +362,7 @@ class Select extends Query {
   }
 
   orWhere(...args) {
-    let condition = createCondition(condition, operator, value);
+    let condition = createCondition(...args);
     if (this.conditions.length) {
       this.conditions = new Disjunction(this.conditions, condition)
     } else {
@@ -377,8 +377,8 @@ class Select extends Query {
     return this;
   }
 
-  withTotals() {
-    this.request_totals = true;
+  withTotals(request_totals = true) {
+    this.request_totals = request_totals;
     return this;
   }
 
