@@ -236,7 +236,7 @@ const AggregateFunctions = {
   uniq: _curry_f('uniq'),
   uniqCombined: _curry_f('uniqCombined'),
   uniqHLL12: _curry_f('uniqHLL12'),
-  uniqExact: _curry_f('uniqExect'),
+  uniqExact: _curry_f('uniqExact'),
   groupArray: _curry_f('groupArray'),
   groupUniqArray: _curry_f('groupUniqArray')
 };
