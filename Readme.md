@@ -2,6 +2,9 @@ ClickHouse SQL Dialect implementation for JS
 ====
 
 [![codecov](https://codecov.io/gh/mbIkola/node-clickhouse-sql/branch/master/graph/badge.svg)](https://codecov.io/gh/mbIkola/node-clickhouse-sql)
+[![npm version](http://img.shields.io/npm/v/clickhouse.svg?style=flat)](https://npmjs.org/package/clickhouse-sql "npmjs")
+
+
 
 ## How? 
 
