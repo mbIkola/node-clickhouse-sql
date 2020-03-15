@@ -1,23 +1,15 @@
-Clickhouse SQL Dialect implementation for JS
+ClickHouse SQL Dialect implementation for JS
 ====
 
-
-## Why?
-It doesn't matter. really;
+[![codecov](https://codecov.io/gh/mbIkola/node-clickhouse-sql/branch/master/graph/badge.svg)](https://codecov.io/gh/mbIkola/node-clickhouse-sql)
 
 ## How? 
 
-```
-import Dialect from "../src/utils/query-builder";
+```js 
+import Dialect from "clickhouse-sql";
 const s = Dialect;
 
-
-console.log(s);
-
-let sql;
-
-
-  sql = new s.Select();
+  let sql = new s.Select();
 
   sql
     .from('solved_hashes')
