@@ -275,6 +275,10 @@ const TimeFunctions = {
   yesterday: _curry_f('yesterday')
 };
 
+const IPAddrFunctions = {
+  IPv4NumToString: _curry_f('IPv4NumToString'),
+};
+
 class Raw extends SQLObject {
   constructor(string) {
     super();
@@ -484,6 +488,7 @@ const Dialect = {
   ...AggregateFunctions,
   ...ArithmeticFunctions,
   ...TimeFunctions,
+  ...IPAddrFunctions,
   ...Consts,
   ...Queries,
   ...Utility
