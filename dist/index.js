@@ -503,6 +503,8 @@ var TimeFunctions = {
   yesterday: _curry_f('yesterday')
 };
 var IPAddrFunctions = {
+  toIPv4: _curry_f('toIPv4'),
+  toIPv6: _curry_f('toIPv6'),
   IPv4NumToString: _curry_f('IPv4NumToString'),
   IPv4StringToNum: _curry_f('IPv4StringToNum'),
   IPv4NumToStringClassC: _curry_f('IPv4NumToStringClassC'),
