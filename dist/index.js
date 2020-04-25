@@ -502,6 +502,9 @@ var TimeFunctions = {
   today: _curry_f('today'),
   yesterday: _curry_f('yesterday')
 };
+var IPAddrFunctions = {
+  IPv4NumToString: _curry_f('IPv4NumToString')
+};
 
 var Raw = /*#__PURE__*/function (_SQLObject6) {
   _inherits(Raw, _SQLObject6);
@@ -754,7 +757,7 @@ var Utility = {
   }
 };
 
-var Dialect = _objectSpread({}, Operators, {}, AggregateFunctions, {}, ArithmeticFunctions, {}, TimeFunctions, {}, Consts, {}, Queries, {}, Utility);
+var Dialect = _objectSpread({}, Operators, {}, AggregateFunctions, {}, ArithmeticFunctions, {}, TimeFunctions, {}, IPAddrFunctions, {}, Consts, {}, Queries, {}, Utility);
 
 var _default = Dialect;
 exports["default"] = _default;
