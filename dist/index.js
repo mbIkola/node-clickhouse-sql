@@ -38,18 +38,30 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var EQUALS = "=";
+var EQ = EQUALS;
 var GREATER = ">";
+var GT = GREATER;
 var GREATER_OR_EQUALS = ">=";
+var GTE = GREATER_OR_EQUALS;
 var LESS = "<";
+var LT = LESS;
 var LESS_OR_EQUALS = "<=";
+var LTE = LESS_OR_EQUALS;
 var NOT_EQUALS = "!=";
+var NE = NOT_EQUALS;
 var Consts = {
   EQUALS: EQUALS,
   GREATER: GREATER,
   GREATER_OR_EQUALS: GREATER_OR_EQUALS,
   LESS: LESS,
   LESS_OR_EQUALS: LESS_OR_EQUALS,
-  NOT_EQUALS: NOT_EQUALS
+  NOT_EQUALS: NOT_EQUALS,
+  EQ: EQ,
+  GT: GT,
+  GTE: GTE,
+  LT: LT,
+  LTE: LTE,
+  NE: NE
 };
 
 var SQLObject = function SQLObject() {

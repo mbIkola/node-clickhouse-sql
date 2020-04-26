@@ -1,9 +1,15 @@
 const EQUALS = "=";
+const EQ = EQUALS;
 const GREATER = ">";
+const GT = GREATER;
 const GREATER_OR_EQUALS = ">=";
+const GTE = GREATER_OR_EQUALS;
 const LESS = "<";
+const LT = LESS;
 const LESS_OR_EQUALS = "<=";
+const LTE = LESS_OR_EQUALS;
 const NOT_EQUALS = "!=";
+const NE = NOT_EQUALS;
 
 const Consts = {
   EQUALS,
@@ -11,7 +17,13 @@ const Consts = {
   GREATER_OR_EQUALS,
   LESS,
   LESS_OR_EQUALS,
-  NOT_EQUALS
+  NOT_EQUALS,
+  EQ,
+  GT,
+  GTE,
+  LT,
+  LTE,
+  NE
 };
 
 class SQLObject {
