@@ -49,10 +49,11 @@ class Conjunction extends Conditions {
 
   toString() {
     return this.args.length
-      ? this.args.map(arg => "(" + arg + ")").join(" and ")
-      : "";
+      ? this.args.map((arg) => {
+        const s = (arg.toString) ? arg.toString() : arg;
+        "(" + s + ")"
+      }).join(" and ") : "";
   }
-
 }
 
 class Condition extends SQLObject {

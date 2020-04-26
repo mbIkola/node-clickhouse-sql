@@ -135,7 +135,8 @@ var Conjunction = /*#__PURE__*/function (_Conditions2) {
     key: "toString",
     value: function toString() {
       return this.args.length ? this.args.map(function (arg) {
-        return "(" + arg + ")";
+        var s = arg.toString ? arg.toString() : arg;
+        "(" + s + ")";
       }).join(" and ") : "";
     }
   }]);
