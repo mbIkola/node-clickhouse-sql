@@ -1,6 +1,6 @@
 {
   "name": "clickhouse-sql",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Yandex Clickhouse SQL Dialect interface",
   "main": "index.js",
   "jsnext:main": "src/index.js",
@@ -27,16 +27,14 @@
   "dependencies": {},
   "devDependencies": {
     "@babel/cli": "^7.8.4",
-    "@babel/core": "^7.8.7",
+    "@babel/core": "^7.9.6",
     "@babel/node": "^7.8.7",
-    "@babel/plugin-transform-runtime": "^7.8.3",
-    "@babel/preset-env": "^7.8.7",
-    "bluebird": "^3.5.0",
+    "@babel/plugin-transform-runtime": "^7.9.6",
+    "@babel/preset-env": "^7.9.6",
     "codecov": "^3.6.5",
-    "core-js": "^3.6.4",
-    "memwatch-next": "^0.3.0",
-    "mocha": "^7.1.0",
-    "nyc": "^15.0.0"
+    "core-js": "^3.6.5",
+    "mocha": "^7.1.2",
+    "nyc": "^15.0.1"
   },
   "author": "Nickolay \"mbIkola\" Kharchevin <kharchevyn@google.com>",
   "license": "SEE LICENSE IN LICENSE"
