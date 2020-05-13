@@ -38,18 +38,30 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var EQUALS = "=";
+var EQ = EQUALS;
 var GREATER = ">";
+var GT = GREATER;
 var GREATER_OR_EQUALS = ">=";
+var GTE = GREATER_OR_EQUALS;
 var LESS = "<";
+var LT = LESS;
 var LESS_OR_EQUALS = "<=";
+var LTE = LESS_OR_EQUALS;
 var NOT_EQUALS = "!=";
+var NE = NOT_EQUALS;
 var Consts = {
   EQUALS: EQUALS,
   GREATER: GREATER,
   GREATER_OR_EQUALS: GREATER_OR_EQUALS,
   LESS: LESS,
   LESS_OR_EQUALS: LESS_OR_EQUALS,
-  NOT_EQUALS: NOT_EQUALS
+  NOT_EQUALS: NOT_EQUALS,
+  EQ: EQ,
+  GT: GT,
+  GTE: GTE,
+  LT: LT,
+  LTE: LTE,
+  NE: NE
 };
 
 var SQLObject = function SQLObject() {
@@ -502,6 +514,15 @@ var TimeFunctions = {
   today: _curry_f('today'),
   yesterday: _curry_f('yesterday')
 };
+var IPAddrFunctions = {
+  toIPv4: _curry_f('toIPv4'),
+  toIPv6: _curry_f('toIPv6'),
+  IPv4NumToString: _curry_f('IPv4NumToString'),
+  IPv4StringToNum: _curry_f('IPv4StringToNum'),
+  IPv4NumToStringClassC: _curry_f('IPv4NumToStringClassC'),
+  IPv6NumToString: _curry_f('IPv6NumToString'),
+  IPv6StringToNum: _curry_f('IPv6StringToNum')
+};
 
 var Raw = /*#__PURE__*/function (_SQLObject6) {
   _inherits(Raw, _SQLObject6);
@@ -754,7 +775,7 @@ var Utility = {
   }
 };
 
-var Dialect = _objectSpread({}, Operators, {}, AggregateFunctions, {}, ArithmeticFunctions, {}, TimeFunctions, {}, Consts, {}, Queries, {}, Utility);
+var Dialect = _objectSpread({}, Operators, {}, AggregateFunctions, {}, ArithmeticFunctions, {}, TimeFunctions, {}, IPAddrFunctions, {}, Consts, {}, Queries, {}, Utility);
 
 var _default = Dialect;
 exports["default"] = _default;

@@ -1,9 +1,15 @@
 const EQUALS = "=";
+const EQ = EQUALS;
 const GREATER = ">";
+const GT = GREATER;
 const GREATER_OR_EQUALS = ">=";
+const GTE = GREATER_OR_EQUALS;
 const LESS = "<";
+const LT = LESS;
 const LESS_OR_EQUALS = "<=";
+const LTE = LESS_OR_EQUALS;
 const NOT_EQUALS = "!=";
+const NE = NOT_EQUALS;
 
 const Consts = {
   EQUALS,
@@ -11,7 +17,13 @@ const Consts = {
   GREATER_OR_EQUALS,
   LESS,
   LESS_OR_EQUALS,
-  NOT_EQUALS
+  NOT_EQUALS,
+  EQ,
+  GT,
+  GTE,
+  LT,
+  LTE,
+  NE
 };
 
 class SQLObject {
@@ -275,6 +287,16 @@ const TimeFunctions = {
   yesterday: _curry_f('yesterday')
 };
 
+const IPAddrFunctions = {
+  toIPv4: _curry_f('toIPv4'),
+  toIPv6: _curry_f('toIPv6'),
+  IPv4NumToString: _curry_f('IPv4NumToString'),
+  IPv4StringToNum: _curry_f('IPv4StringToNum'),
+  IPv4NumToStringClassC: _curry_f('IPv4NumToStringClassC'),
+  IPv6NumToString: _curry_f('IPv6NumToString'),
+  IPv6StringToNum: _curry_f('IPv6StringToNum')
+};
+
 class Raw extends SQLObject {
   constructor(string) {
     super();
@@ -483,6 +505,7 @@ const Dialect = {
   ...AggregateFunctions,
   ...ArithmeticFunctions,
   ...TimeFunctions,
+  ...IPAddrFunctions,
   ...Consts,
   ...Queries,
   ...Utility
