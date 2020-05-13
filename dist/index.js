@@ -146,9 +146,11 @@ var Conjunction = /*#__PURE__*/function (_Conditions2) {
   _createClass(Conjunction, [{
     key: "toString",
     value: function toString() {
-      return this.args.length ? this.args.map(function (arg) {
-        return "(" + arg + ")";
-      }).join(" and ") : "";
+      if (!this.args.length) return "";
+      return this.args.map(function (arg) {
+        var s = arg.toString ? arg.toString() : arg;
+        return "(" + s + ")";
+      }).join(" and ");
     }
   }]);
 

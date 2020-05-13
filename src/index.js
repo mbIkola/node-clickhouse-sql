@@ -60,11 +60,13 @@ class Conjunction extends Conditions {
   }
 
   toString() {
-    return this.args.length
-      ? this.args.map(arg => "(" + arg + ")").join(" and ")
-      : "";
-  }
+    if (!this.args.length) return "";
 
+    return this.args.map((arg) => {
+      const s = (arg.toString) ? arg.toString() : arg;
+      return "(" + s + ")";
+    }).join(" and ");
+  }
 }
 
 class Condition extends SQLObject {
