@@ -322,11 +322,10 @@ class Select extends Query {
     this.aggregations = [];
     this.select_list = [];
     this.order_expressions = [];
-    this.request_totals = [];
+    this.request_totals = undefined;
     this.sampling = undefined;
     this.limits = undefined;
     this.limitbycolumns = undefined;
-
   }
 
   select(...columns) {
