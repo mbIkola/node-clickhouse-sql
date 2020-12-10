@@ -470,6 +470,10 @@ var _curry_f = function _curry_f(name) {
   };
 };
 
+var _cast = function _cast(t) {
+  return new SqlFunction('cast', quoteVal(t));
+};
+
 var AggregateFunctions = {
   count: _curry_f('count'),
   any: _curry_f('any'),
@@ -777,7 +781,7 @@ var Utility = {
   raw: function raw(s) {
     return new Raw(s);
   },
-  cast: _curry_f('CAST')
+  cast: _cast
 };
 
 var Dialect = _objectSpread({}, Operators, {}, AggregateFunctions, {}, ArithmeticFunctions, {}, TimeFunctions, {}, IPAddrFunctions, {}, Consts, {}, Queries, {}, Utility);
