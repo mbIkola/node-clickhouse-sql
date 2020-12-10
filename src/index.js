@@ -239,8 +239,8 @@ const _curry_f = (name) => {
   return (...args) => new SQLFunction(name, ...args)
 };
 
-const _cast = (t) => {
-  return new SqlFunction('cast', quoteVal(t));
+const _cast = (thing, t) => {
+  return new SqlFunction('cast', thing, quoteVal(t));
 };
 
 const AggregateFunctions = {

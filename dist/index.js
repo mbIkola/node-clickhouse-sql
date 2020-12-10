@@ -470,8 +470,8 @@ var _curry_f = function _curry_f(name) {
   };
 };
 
-var _cast = function _cast(t) {
-  return new SqlFunction('cast', quoteVal(t));
+var _cast = function _cast(thing, t) {
+  return new SqlFunction('cast', thing, quoteVal(t));
 };
 
 var AggregateFunctions = {
