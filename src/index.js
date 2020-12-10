@@ -500,7 +500,7 @@ const Utility = {
   quoteVal, val: quoteVal,
   quoteTerm, term: quoteTerm,
   raw: (s) => new Raw(s),
-
+  cast: _curry_f('CAST'),
 };
 
 
