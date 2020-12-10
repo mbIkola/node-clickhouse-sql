@@ -240,7 +240,7 @@ const _curry_f = (name) => {
 };
 
 const _cast = (thing, t) => {
-  return new SqlFunction('cast', thing, quoteVal(t));
+  return new SQLFunction('cast', thing, quoteVal(t));
 };
 
 const AggregateFunctions = {
