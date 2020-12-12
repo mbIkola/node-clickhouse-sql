@@ -239,10 +239,6 @@ const _curry_f = (name) => {
   return (...args) => new SQLFunction(name, ...args)
 };
 
-const _cast = (thing, t) => {
-  return new SQLFunction('cast', thing, quoteVal(t));
-};
-
 const AggregateFunctions = {
   count: _curry_f('count'),
   any: _curry_f('any'),
@@ -504,7 +500,9 @@ const Utility = {
   quoteVal, val: quoteVal,
   quoteTerm, term: quoteTerm,
   raw: (s) => new Raw(s),
-  cast: _cast,
+  cast: (thing, t) => {
+    return new SQLFunction('cast', thing, quoteVal(t));
+  },
 };
 
 
