@@ -28,7 +28,8 @@ describe('main', function() {
         .withTotals()
         .orderBy('t')
         .limit(1000)
-        .limitBy(5, 'presetId');
+        .limitBy(5, 'presetId')
+        .format('json');
 
       assert.equal(sql.toString(), "select  " +
         "`presetId`,toStartOfMinute(`ts`) as `t`," +
@@ -39,7 +40,7 @@ describe('main', function() {
         "from `solved_hashes`   " +
         "prewhere (`ts` < toStartOfMinute(now())) and (`accountId` = '5a7484afe90bab6ecc346aa4')   " +
         "group by `presetId`,`t`  with totals   " +
-        "order by `t`  limit 5 by `presetId`  limit 1000")
+        "order by `t`  limit 5 by `presetId`  limit 1000  format JSON")
     });
 
     it('from chain', () => {
