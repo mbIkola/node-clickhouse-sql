@@ -30,16 +30,16 @@ describe('main', function() {
         .limit(1000)
         .limitBy(5, 'presetId');
 
-      assert.equal(sql.toString(), "select  " +
+      assert.equal(sql.toString(), "select " +
         "`presetId`,toStartOfMinute(`ts`) as `t`," +
         "uniq(`minerId`),sum(`cpuTime`),sum(`hashes`)," +
         "divide(sum(`hashes`),60) as `hashrate`,avg(`blockReward`)," +
         "avg(`avgReward`),max(`netDiff`),min(`netDiff`)," +
         "sum(multiply(multiply(`hashes`,divide(`blockReward`,`netDiff`)),0.8)) as `approx reward in XMR` " +
-        "from `solved_hashes`   " +
-        "prewhere (`ts` < toStartOfMinute(now())) and (`accountId` = '5a7484afe90bab6ecc346aa4')   " +
-        "group by `presetId`,`t`  with totals   " +
-        "order by `t`  limit 5 by `presetId`  limit 1000")
+        "from `solved_hashes` " +
+        "prewhere (`ts` < toStartOfMinute(now())) and (`accountId` = '5a7484afe90bab6ecc346aa4') " +
+        "group by `presetId`,`t` with totals " +
+        "order by `t` limit 5 by `presetId` limit 1000")
     });
 
     it('from chain', () => {
@@ -57,8 +57,8 @@ describe('main', function() {
 
       assert.equal(
         q.trim(),
-        "select  * from `table0`,`table1` as `alias1`,`table2` as `alias2`   " +
-        "prewhere ((`ts` < toStartOfMinute(now()))) or (`ts` > toStartOfYear(now()))  " +
+        "select * from `table0`,`table1` as `alias1`,`table2` as `alias2` " +
+        "prewhere ((`ts` < toStartOfMinute(now()))) or (`ts` > toStartOfYear(now())) " +
         "where ((`my life` = 'is taken')) or (`annihilation` <= any(`Suffocation`,`disintegration`))"
       );
     })
