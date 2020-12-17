@@ -61,7 +61,7 @@ describe('main', function() {
         "prewhere ((`ts` < toStartOfMinute(now()))) or (`ts` > toStartOfYear(now())) " +
         "where ((`my life` = 'is taken')) or (`annihilation` <= any(`Suffocation`,`disintegration`))"
       );
-    })
+    });
 
     it('mixed boolean operators', () => {
       const s = Dialect;
@@ -69,13 +69,13 @@ describe('main', function() {
 
       const q = selectBuilder
         .from('table0')
-        .where(s.Or(s.Condition('a', s.EQ, 1), s.Condition('a', s.EQ, 2)))
-        .where(s.And(s.Condition('b', s.EQ, 1), s.Condition('c', s.EQ, 1)))
+        .where(s.Or(s.Eq('a', 1), s.Eq('a', 2)))
+        .where(s.And(s.Eq('b', 1), s.Eq('c', 1)))
         .toString();
 
       assert.equal(
         q.trim(),
         "select * from `table0` where ((`a` = 1) or (`a` = 2)) and ((`b` = 1) and (`c` = 1))"
       )
-    })
+    });
 });

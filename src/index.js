@@ -501,14 +501,25 @@ const Queries = {
   Select
 };
 
+
 const Utility = {
   quoteVal, val: quoteVal,
   quoteTerm, term: quoteTerm,
   raw: (s) => new Raw(s),
   cast: (thing, t) => new SQLFunction('cast', thing, quoteVal(t)),
   Condition: (...args) => new Condition(...args),
+};
+
+
+const Shortcuts = {
   And: (...args) => new Conjunction(...args),
   Or: (...args) => new Disjunction(...args),
+  Eq: (col, val) => new Condition(col, Consts.EQ, val),
+  Ne: (col, val) => new Condition(col, Consts.NE, val),
+  Gte: (col, val) => new Condition(col, Consts.GTE, val),
+  Lte: (col, val) => new Condition(col, Consts.LTE, val),
+  Lt: (col, val) => new Condition(col, Consts.LT, val),
+  Gt: (col, val) => new Conjunction(col, Consts.GT, val),
 };
 
 
@@ -521,5 +532,6 @@ const Dialect = {
   ...Consts,
   ...Queries,
   ...Utility,
+  ...Shortcuts,
 };
 export default Dialect;

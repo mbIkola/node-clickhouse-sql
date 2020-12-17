@@ -816,7 +816,9 @@ var Utility = {
     }
 
     return _construct(_Condition3, args);
-  },
+  }
+};
+var Shortcuts = {
   And: function And() {
     for (var _len17 = arguments.length, args = new Array(_len17), _key17 = 0; _key17 < _len17; _key17++) {
       args[_key17] = arguments[_key17];
@@ -830,10 +832,28 @@ var Utility = {
     }
 
     return _construct(Disjunction, args);
+  },
+  Eq: function Eq(col, val) {
+    return new _Condition3(col, Consts.EQ, val);
+  },
+  Ne: function Ne(col, val) {
+    return new _Condition3(col, Consts.NE, val);
+  },
+  Gte: function Gte(col, val) {
+    return new _Condition3(col, Consts.GTE, val);
+  },
+  Lte: function Lte(col, val) {
+    return new _Condition3(col, Consts.LTE, val);
+  },
+  Lt: function Lt(col, val) {
+    return new _Condition3(col, Consts.LT, val);
+  },
+  Gt: function Gt(col, val) {
+    return new Conjunction(col, Consts.GT, val);
   }
 };
 
-var Dialect = _objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread({}, Operators), AggregateFunctions), ArithmeticFunctions), TimeFunctions), IPAddrFunctions), Consts), Queries), Utility);
+var Dialect = _objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread({}, Operators), AggregateFunctions), ArithmeticFunctions), TimeFunctions), IPAddrFunctions), Consts), Queries), Utility), Shortcuts);
 
 var _default = Dialect;
 exports["default"] = _default;
