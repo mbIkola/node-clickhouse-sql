@@ -76,7 +76,7 @@ describe('main', function() {
       const q = selectBuilder
         .select('a.a', 'a.b', 'b.c', 'b.d')
         .from(['table0', 'a'], [q0, 'b'])
-        .where('a.c', s.EQ, s.col('b.c'))
+        .where('a.c', s.EQ, s.term('b.c'))
         .toString();
 
       assert.equal(
