@@ -62,4 +62,20 @@ describe('main', function() {
         "where ((`my life` = 'is taken')) or (`annihilation` <= any(`Suffocation`,`disintegration`))"
       );
     })
+
+    it('mixed boolean operators', () => {
+      const s = Dialect;
+      let selectBuilder = new Dialect.Select();
+
+      const q = selectBuilder
+        .from('table0')
+        .where(s.Or(s.Condition('a', s.EQ, 1), s.Condition('a', s.EQ, 2)))
+        .where(s.And(s.Condition('b', s.EQ, 1), s.Condition('c', s.EQ, 1)))
+        .toString();
+
+      assert.equal(
+        q.trim(),
+        "select * from `table0` where ((`a` = 1) or (`a` = 2)) and ((`b` = 1) and (`c` = 1))"
+      )
+    })
 });
