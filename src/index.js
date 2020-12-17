@@ -104,9 +104,10 @@ class InclusionOperator extends Condition {
 
   toString() {
     return [
-      this.column,
+      quoteTerm(this.column),
+      " ",
       this.operator,
-      "(",
+      " (",
       Array.isArray(this.value)
         ? this.value.map(val => quoteVal(val)).join(',')
         : this.value,
@@ -500,7 +501,8 @@ const Utility = {
   quoteVal, val: quoteVal,
   quoteTerm, term: quoteTerm,
   raw: (s) => new Raw(s),
-
+  in: (col, values) => new In(col, null, values),
+  notIn: (col, values) => new NotIn(col, null, values),
 };
 
 

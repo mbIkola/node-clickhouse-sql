@@ -61,5 +61,21 @@ describe('main', function() {
         "prewhere ((`ts` < toStartOfMinute(now()))) or (`ts` > toStartOfYear(now()))  " +
         "where ((`my life` = 'is taken')) or (`annihilation` <= any(`Suffocation`,`disintegration`))"
       );
-    })
+    });
+
+    it('in operator', () => {
+      const s = Dialect;
+      let selectBuilder = new Dialect.Select();
+
+      const q = selectBuilder
+        .from('table0')
+        .select('a', 'b')
+        .where(s.in('a', [1, 2, 3]))
+        .toString();
+
+      assert.equal(
+        q.trim(),
+        "select  `a`,`b` from `table0`    where (`a` in (1,2,3))"
+      );
+    });
 });
