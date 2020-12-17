@@ -1,5 +1,7 @@
 "use strict";
 
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -17,8 +19,6 @@ function _get(target, property, receiver) { if (typeof Reflect !== "undefined" &
 
 function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
@@ -27,7 +27,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function () { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
@@ -172,9 +172,9 @@ var Condition = /*#__PURE__*/function (_SQLObject2) {
     _classCallCheck(this, Condition);
 
     _this2 = _super4.call(this);
-    _this2.column = column;
+    _this2.column = quoteTerm(column);
     _this2.operator = operator;
-    _this2.value = value;
+    _this2.value = value instanceof SQLObject ? value : quoteVal(value);
     return _this2;
   }
 
@@ -182,7 +182,7 @@ var Condition = /*#__PURE__*/function (_SQLObject2) {
     key: "toString",
     value: function toString() {
       if (this.operator) {
-        return [quoteTerm(this.column), this.operator, quoteVal(this.value)].join(' ');
+        return [quoteTerm(this.column), this.operator, this.value].join(' ');
       } else {
         return this.column;
       }
@@ -428,6 +428,12 @@ var Term = /*#__PURE__*/function (_SQLObject4) {
     value: function toString() {
       var _this$term;
 
+      var parts = this.term.split('.');
+
+      if (parts.length > 1) {
+        return [new Term(parts[0]).toString(), new Term(parts[1]).toString()].join('.');
+      }
+
       return '`' + (_this$term = this.term).replace.apply(_this$term, commonReplacer).replace(/`/g, '\\`') + '`';
     }
   }]);
@@ -647,9 +653,18 @@ var Select = /*#__PURE__*/function (_Query) {
       }
 
       tables = tables.map(function (table) {
-        if (typeof table === "string") return [table, table];
-        if (Array.isArray(table)) return table;
-        return [Object.keys(table)[0], Object.values(table)[0]];
+        if (typeof table === "string") return [quoteTerm(table)];
+
+        if (Array.isArray(table)) {
+          if (table[0] instanceof Select) table[0] = '(' + table[0].toString() + ')';else table[0] = quoteTerm(table[0]);
+          table[1] = quoteTerm(table[1]);
+          return table;
+        }
+
+        if (table instanceof Select) return ['(' + table.toString() + ')'];
+        var alias = Object.values(table)[0];
+        if (alias instanceof Select) alias = '(' + alias.toString() + ')';else alias = quoteTerm(alias);
+        return [alias, quoteTerm(Object.keys(table)[0])];
       });
       this.tables = tables;
       return this;
@@ -763,7 +778,7 @@ var Select = /*#__PURE__*/function (_Query) {
       }
 
       var from = this.from().map(function (table) {
-        return table[0] === table[1] ? quoteTerm(table[0]) : quoteTerm(table[0]) + ' as ' + quoteTerm(table[1]);
+        return table.length === 1 ? table[0] : table[0] + ' as ' + table[1];
       });
       from = from.length ? "from " + from.join() : "";
       var prewhere = this.preconditions.length ? " prewhere " + this.preconditions : "";
@@ -798,6 +813,9 @@ var Utility = {
   term: quoteTerm,
   raw: function raw(s) {
     return new Raw(s);
+  },
+  col: function col(v) {
+    return new Term(v);
   }
 };
 

@@ -47,7 +47,7 @@ describe('main', function() {
       let selectBuilder = new Dialect.Select();
 
       const q = selectBuilder
-        .from('table0', ['table1', 'alias1'], {'table2': 'alias2'})
+        .from('table0', ['table1', 'alias1'], {'alias2': 'table2'})
         .withTotals(false)
         .prewhere('ts', s.LESS, s.toStartOfMinute(s.now()))
         .orPrewhere('ts', s.GREATER, s.toStartOfYear(s.now()))
@@ -61,5 +61,27 @@ describe('main', function() {
         "prewhere ((`ts` < toStartOfMinute(now()))) or (`ts` > toStartOfYear(now()))  " +
         "where ((`my life` = 'is taken')) or (`annihilation` <= any(`Suffocation`,`disintegration`))"
       );
-    })
+    });
+
+    it('derived table', () => {
+      const s = Dialect;
+      let tableBuilder = new s.Select();
+      let selectBuilder = new s.Select();
+
+      const q0 = tableBuilder
+        .select('a', 'b', 'c')
+        .from('table1')
+        .where('a', s.EQ, 1);
+
+      const q = selectBuilder
+        .select('a', 'b', 'c', 'd')
+        .from('table0', [q0, 'd'])
+        .where('c', s.EQ, s.col('d.d'))
+        .toString();
+
+      assert.equal(
+        q.trim(),
+        "select  `a`,`b`,`c`,`d` from `table0`,(select  `a`,`b`,`c` from `table1`    where (`a` = 1)      ) as `d`    where (`c` = `d`.`d`)"
+      );
+    });
 });
