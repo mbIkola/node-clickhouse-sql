@@ -813,9 +813,6 @@ var Utility = {
   term: quoteTerm,
   raw: function raw(s) {
     return new Raw(s);
-  },
-  col: function col(v) {
-    return new Term(v);
   }
 };
 

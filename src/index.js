@@ -515,7 +515,6 @@ const Utility = {
   quoteVal, val: quoteVal,
   quoteTerm, term: quoteTerm,
   raw: (s) => new Raw(s),
-  col: (v) => new Term(v),
 };
 
 
