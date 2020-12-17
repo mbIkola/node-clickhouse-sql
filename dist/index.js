@@ -182,7 +182,7 @@ var Condition = /*#__PURE__*/function (_SQLObject2) {
     key: "toString",
     value: function toString() {
       if (this.operator) {
-        return [quoteTerm(this.column), this.operator, this.value].join(' ');
+        return [this.column, this.operator, this.value].join(' ');
       } else {
         return this.column;
       }

@@ -79,7 +79,7 @@ class Condition extends SQLObject {
 
   toString() {
     if (this.operator) {
-      return [quoteTerm(this.column), this.operator, this.value].join(' ');
+      return [this.column, this.operator, this.value].join(' ');
     } else {
       return this.column;
     }

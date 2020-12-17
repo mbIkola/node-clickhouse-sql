@@ -74,14 +74,14 @@ describe('main', function() {
         .where('a', s.EQ, 1);
 
       const q = selectBuilder
-        .select('a', 'b', 'c', 'd')
-        .from('table0', [q0, 'd'])
-        .where('c', s.EQ, s.col('d.d'))
+        .select('a.a', 'a.b', 'b.c', 'b.d')
+        .from(['table0', 'a'], [q0, 'b'])
+        .where('a.c', s.EQ, s.col('b.c'))
         .toString();
 
       assert.equal(
         q.trim(),
-        "select  `a`,`b`,`c`,`d` from `table0`,(select  `a`,`b`,`c` from `table1`    where (`a` = 1)      ) as `d`    where (`c` = `d`.`d`)"
+        "select  `a`.`a`,`a`.`b`,`b`.`c`,`b`.`d` from `table0` as `a`,(select  `a`,`b`,`c` from `table1`    where (`a` = 1)      ) as `b`    where (`a`.`c` = `b`.`c`)"
       );
     });
 });
