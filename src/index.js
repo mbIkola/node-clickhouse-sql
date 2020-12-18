@@ -331,6 +331,7 @@ class Select extends Query {
     this.sampling = undefined;
     this.limits = undefined;
     this.limitbycolumns = undefined;
+    this.fmt = undefined;
   }
 
   select(...columns) {
@@ -427,6 +428,11 @@ class Select extends Query {
     return this;
   }
 
+  format(fmt) {
+    this.fmt = fmt;
+    return this;
+  }
+
   toString() {
     let select_list;
     if (this.select_list.length === 0) {
@@ -474,6 +480,10 @@ class Select extends Query {
       ? " limit " + this.limits.number + (typeof this.limits.offset === "undefined" ? "" : "," + this.limits.offset)
       : '';
 
+    let format = this.fmt
+      ? " format " + this.fmt.toUpperCase()
+      : "";
+
     return [
       "select ",
       select_list,
@@ -486,7 +496,8 @@ class Select extends Query {
       having,
       order_by,
       limitby,
-      limit
+      limit,
+      format,
     ].join(' ');
 
   }
