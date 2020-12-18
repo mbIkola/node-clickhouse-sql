@@ -72,14 +72,14 @@ class Conjunction extends Conditions {
 class Condition extends SQLObject {
   constructor(column, operator, value) {
     super();
-    this.column = column;
+    this.column = quoteTerm(column);
     this.operator = operator;
-    this.value = value;
+    this.value = (value instanceof SQLObject) ? value : quoteVal(value);
   }
 
   toString() {
     if (this.operator) {
-      return [quoteTerm(this.column), this.operator, quoteVal(this.value)].join(' ');
+      return [this.column, this.operator, this.value].join(' ');
     } else {
       return this.column;
     }
@@ -208,6 +208,11 @@ class Term extends SQLObject {
   }
 
   toString() {
+    const parts = this.term.split('.');
+    if (parts.length > 1) {
+      return [new Term(parts[0]).toString(), new Term(parts[1]).toString()].join('.');
+    }
+
     return '`' + this.term.replace(...commonReplacer).replace(/`/g, '\\`') + '`';
   }
 }
@@ -357,10 +362,20 @@ class Select extends Query {
     }
 
     tables = tables.map(table => {
-      if (typeof table === "string") return [table, table];
-      if (Array.isArray(table)) return table;
+      if (typeof table === "string") return [quoteTerm(table)];
+      if (Array.isArray(table)) {
+        if (table[0] instanceof Select) table[0] = '(' + table[0].toString() + ')';
+        else table[0] = quoteTerm(table[0]);
+        table[1] = quoteTerm(table[1]);
+        return table;
+      }
+      if (table instanceof Select) return ['(' + table.toString() + ')'];
 
-      return [Object.keys(table)[0], Object.values(table)[0]]
+      let alias = Object.values(table)[0];
+      if (alias instanceof Select) alias = '(' + alias.toString() + ')';
+      else alias = quoteTerm(alias);
+
+      return [alias, quoteTerm(Object.keys(table)[0])];
     });
 
     this.tables = tables;
@@ -448,9 +463,9 @@ class Select extends Query {
 
     let from = this.from().map(
       (table) =>
-        table[0] === table[1]
-          ? quoteTerm(table[0])
-          : quoteTerm(table[0]) + ' as ' + quoteTerm(table[1])
+        table.length === 1
+          ? table[0]
+          : table[0] + ' as ' + table[1]
     );
     from = from.length ? "from " + from.join() : "";
 

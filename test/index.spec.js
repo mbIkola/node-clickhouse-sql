@@ -1,6 +1,13 @@
 const assert = require('assert');
 const Dialect = require('../');
 
+const equalsIgnoringWhitespaces = (expected, actual) => {
+  expected = (expected || '').replace(/\s+/g, '').trim();
+  actual = (actual || '').replace(/\s+/g, '').trim();
+
+  return assert.equal(expected, actual);
+}
+
 describe('main', function() {
     it('sanity', () => {
       const s = Dialect;
@@ -48,7 +55,7 @@ describe('main', function() {
       let selectBuilder = new Dialect.Select();
 
       const q = selectBuilder
-        .from('table0', ['table1', 'alias1'], {'table2': 'alias2'})
+        .from('table0', ['table1', 'alias1'], {'alias2': 'table2'})
         .withTotals(false)
         .prewhere('ts', s.LESS, s.toStartOfMinute(s.now()))
         .orPrewhere('ts', s.GREATER, s.toStartOfYear(s.now()))
@@ -64,6 +71,7 @@ describe('main', function() {
       );
     });
 
+
     it('in operator', () => {
       const s = Dialect;
       let selectBuilder = new Dialect.Select();
@@ -77,6 +85,31 @@ describe('main', function() {
       assert.equal(
         q.trim(),
         "select  `a`,`b` from `table0`    where (`a` in (1,2,3))"
+      );
+    });
+
+
+    it('derived table', () => {
+      const s = Dialect;
+      let tableBuilder = new s.Select();
+      let selectBuilder = new s.Select();
+
+      const q0 = tableBuilder
+        .select('a', 'b', 'c')
+        .from('table1')
+        .where('a', s.EQ, 1);
+
+      const q = selectBuilder
+        .select('a.a', 'a.b', 'b.c', 'b.d')
+        .from(['table0', 'a'], [q0, 'b'])
+        .where('a.c', s.EQ, s.term('b.c'))
+        .toString();
+
+      equalsIgnoringWhitespaces(
+        q,
+        "select  `a`.`a`,`a`.`b`,`b`.`c`,`b`.`d` from `table0` as `a`," +
+        "(select  `a`,`b`,`c` from `table1`    where (`a` = 1) ) as `b` " +
+        "where (`a`.`c` = `b`.`c`)"
       );
     });
 });

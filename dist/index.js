@@ -1,5 +1,7 @@
 "use strict";
 
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -11,29 +13,29 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-function isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-function _construct(Parent, args, Class) { if (isNativeReflectConstruct()) { _construct = Reflect.construct; } else { _construct = function _construct(Parent, args, Class) { var a = [null]; a.push.apply(a, args); var Constructor = Function.bind.apply(Parent, a); var instance = new Constructor(); if (Class) _setPrototypeOf(instance, Class.prototype); return instance; }; } return _construct.apply(null, arguments); }
+function _construct(Parent, args, Class) { if (_isNativeReflectConstruct()) { _construct = Reflect.construct; } else { _construct = function _construct(Parent, args, Class) { var a = [null]; a.push.apply(a, args); var Constructor = Function.bind.apply(Parent, a); var instance = new Constructor(); if (Class) _setPrototypeOf(instance, Class.prototype); return instance; }; } return _construct.apply(null, arguments); }
 
 function _get(target, property, receiver) { if (typeof Reflect !== "undefined" && Reflect.get) { _get = Reflect.get; } else { _get = function _get(target, property, receiver) { var base = _superPropBase(target, property); if (!base) return; var desc = Object.getOwnPropertyDescriptor(base, property); if (desc.get) { return desc.get.call(receiver); } return desc.value; }; } return _get(target, property, receiver || target); }
 
 function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -71,12 +73,14 @@ var SQLObject = function SQLObject() {
 var Conditions = /*#__PURE__*/function (_SQLObject) {
   _inherits(Conditions, _SQLObject);
 
+  var _super = _createSuper(Conditions);
+
   function Conditions() {
     var _this;
 
     _classCallCheck(this, Conditions);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(Conditions).call(this));
+    _this = _super.call(this);
 
     for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
       args[_key] = arguments[_key];
@@ -104,16 +108,16 @@ var Conditions = /*#__PURE__*/function (_SQLObject) {
 var Disjunction = /*#__PURE__*/function (_Conditions) {
   _inherits(Disjunction, _Conditions);
 
-  function Disjunction() {
-    var _getPrototypeOf2;
+  var _super2 = _createSuper(Disjunction);
 
+  function Disjunction() {
     _classCallCheck(this, Disjunction);
 
     for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
       args[_key2] = arguments[_key2];
     }
 
-    return _possibleConstructorReturn(this, (_getPrototypeOf2 = _getPrototypeOf(Disjunction)).call.apply(_getPrototypeOf2, [this].concat(args)));
+    return _super2.call.apply(_super2, [this].concat(args));
   }
 
   _createClass(Disjunction, [{
@@ -131,16 +135,16 @@ var Disjunction = /*#__PURE__*/function (_Conditions) {
 var Conjunction = /*#__PURE__*/function (_Conditions2) {
   _inherits(Conjunction, _Conditions2);
 
-  function Conjunction() {
-    var _getPrototypeOf3;
+  var _super3 = _createSuper(Conjunction);
 
+  function Conjunction() {
     _classCallCheck(this, Conjunction);
 
     for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
       args[_key3] = arguments[_key3];
     }
 
-    return _possibleConstructorReturn(this, (_getPrototypeOf3 = _getPrototypeOf(Conjunction)).call.apply(_getPrototypeOf3, [this].concat(args)));
+    return _super3.call.apply(_super3, [this].concat(args));
   }
 
   _createClass(Conjunction, [{
@@ -160,15 +164,17 @@ var Conjunction = /*#__PURE__*/function (_Conditions2) {
 var Condition = /*#__PURE__*/function (_SQLObject2) {
   _inherits(Condition, _SQLObject2);
 
+  var _super4 = _createSuper(Condition);
+
   function Condition(column, operator, value) {
     var _this2;
 
     _classCallCheck(this, Condition);
 
-    _this2 = _possibleConstructorReturn(this, _getPrototypeOf(Condition).call(this));
-    _this2.column = column;
+    _this2 = _super4.call(this);
+    _this2.column = quoteTerm(column);
     _this2.operator = operator;
-    _this2.value = value;
+    _this2.value = value instanceof SQLObject ? value : quoteVal(value);
     return _this2;
   }
 
@@ -176,7 +182,7 @@ var Condition = /*#__PURE__*/function (_SQLObject2) {
     key: "toString",
     value: function toString() {
       if (this.operator) {
-        return [quoteTerm(this.column), this.operator, quoteVal(this.value)].join(' ');
+        return [this.column, this.operator, this.value].join(' ');
       } else {
         return this.column;
       }
@@ -189,10 +195,12 @@ var Condition = /*#__PURE__*/function (_SQLObject2) {
 var Negation = /*#__PURE__*/function (_Condition) {
   _inherits(Negation, _Condition);
 
+  var _super5 = _createSuper(Negation);
+
   function Negation(column, operator, value) {
     _classCallCheck(this, Negation);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(Negation).call(this, column, operator, value));
+    return _super5.call(this, column, operator, value);
   }
 
   _createClass(Negation, [{
@@ -208,12 +216,14 @@ var Negation = /*#__PURE__*/function (_Condition) {
 var InclusionOperator = /*#__PURE__*/function (_Condition2) {
   _inherits(InclusionOperator, _Condition2);
 
+  var _super6 = _createSuper(InclusionOperator);
+
   function InclusionOperator(inclusionType, column, operator, value) {
     var _this3;
 
     _classCallCheck(this, InclusionOperator);
 
-    _this3 = _possibleConstructorReturn(this, _getPrototypeOf(InclusionOperator).call(this, column, operator, value));
+    _this3 = _super6.call(this, column, operator, value);
     _this3.operator = inclusionType;
     return _this3;
   }
@@ -221,7 +231,7 @@ var InclusionOperator = /*#__PURE__*/function (_Condition2) {
   _createClass(InclusionOperator, [{
     key: "toString",
     value: function toString() {
-      return [this.column, this.operator, "(", Array.isArray(this.value) ? this.value.map(function (val) {
+      return [quoteTerm(this.column), " ", this.operator, " (", Array.isArray(this.value) ? this.value.map(function (val) {
         return quoteVal(val);
       }).join(',') : this.value, ")"].join('');
     }
@@ -233,16 +243,16 @@ var InclusionOperator = /*#__PURE__*/function (_Condition2) {
 var In = /*#__PURE__*/function (_InclusionOperator) {
   _inherits(In, _InclusionOperator);
 
-  function In() {
-    var _getPrototypeOf4;
+  var _super7 = _createSuper(In);
 
+  function In() {
     _classCallCheck(this, In);
 
     for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
       args[_key4] = arguments[_key4];
     }
 
-    return _possibleConstructorReturn(this, (_getPrototypeOf4 = _getPrototypeOf(In)).call.apply(_getPrototypeOf4, [this, "in"].concat(args)));
+    return _super7.call.apply(_super7, [this, "in"].concat(args));
   }
 
   return In;
@@ -251,16 +261,16 @@ var In = /*#__PURE__*/function (_InclusionOperator) {
 var NotIn = /*#__PURE__*/function (_InclusionOperator2) {
   _inherits(NotIn, _InclusionOperator2);
 
-  function NotIn() {
-    var _getPrototypeOf5;
+  var _super8 = _createSuper(NotIn);
 
+  function NotIn() {
     _classCallCheck(this, NotIn);
 
     for (var _len5 = arguments.length, args = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
       args[_key5] = arguments[_key5];
     }
 
-    return _possibleConstructorReturn(this, (_getPrototypeOf5 = _getPrototypeOf(NotIn)).call.apply(_getPrototypeOf5, [this, "not in"].concat(args)));
+    return _super8.call.apply(_super8, [this, "not in"].concat(args));
   }
 
   return NotIn;
@@ -269,16 +279,16 @@ var NotIn = /*#__PURE__*/function (_InclusionOperator2) {
 var GlobalNotIn = /*#__PURE__*/function (_InclusionOperator3) {
   _inherits(GlobalNotIn, _InclusionOperator3);
 
-  function GlobalNotIn() {
-    var _getPrototypeOf6;
+  var _super9 = _createSuper(GlobalNotIn);
 
+  function GlobalNotIn() {
     _classCallCheck(this, GlobalNotIn);
 
     for (var _len6 = arguments.length, args = new Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
       args[_key6] = arguments[_key6];
     }
 
-    return _possibleConstructorReturn(this, (_getPrototypeOf6 = _getPrototypeOf(GlobalNotIn)).call.apply(_getPrototypeOf6, [this, "global not in"].concat(args)));
+    return _super9.call.apply(_super9, [this, "global not in"].concat(args));
   }
 
   return GlobalNotIn;
@@ -287,16 +297,16 @@ var GlobalNotIn = /*#__PURE__*/function (_InclusionOperator3) {
 var GlobalIn = /*#__PURE__*/function (_InclusionOperator4) {
   _inherits(GlobalIn, _InclusionOperator4);
 
-  function GlobalIn() {
-    var _getPrototypeOf7;
+  var _super10 = _createSuper(GlobalIn);
 
+  function GlobalIn() {
     _classCallCheck(this, GlobalIn);
 
     for (var _len7 = arguments.length, args = new Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
       args[_key7] = arguments[_key7];
     }
 
-    return _possibleConstructorReturn(this, (_getPrototypeOf7 = _getPrototypeOf(GlobalIn)).call.apply(_getPrototypeOf7, [this, "global in"].concat(args)));
+    return _super10.call.apply(_super10, [this, "global in"].concat(args));
   }
 
   return GlobalIn;
@@ -360,12 +370,14 @@ var commonReplacer = [/[\0\n\r\b\t\\'"\x1a]/g, function (s) {
 var Value = /*#__PURE__*/function (_SQLObject3) {
   _inherits(Value, _SQLObject3);
 
+  var _super11 = _createSuper(Value);
+
   function Value(value) {
     var _this4;
 
     _classCallCheck(this, Value);
 
-    _this4 = _possibleConstructorReturn(this, _getPrototypeOf(Value).call(this));
+    _this4 = _super11.call(this);
     _this4.value = value;
     return _this4;
   }
@@ -399,12 +411,14 @@ var Value = /*#__PURE__*/function (_SQLObject3) {
 var Term = /*#__PURE__*/function (_SQLObject4) {
   _inherits(Term, _SQLObject4);
 
+  var _super12 = _createSuper(Term);
+
   function Term(term) {
     var _this5;
 
     _classCallCheck(this, Term);
 
-    _this5 = _possibleConstructorReturn(this, _getPrototypeOf(Term).call(this));
+    _this5 = _super12.call(this);
     _this5.term = term;
     return _this5;
   }
@@ -413,6 +427,12 @@ var Term = /*#__PURE__*/function (_SQLObject4) {
     key: "toString",
     value: function toString() {
       var _this$term;
+
+      var parts = this.term.split('.');
+
+      if (parts.length > 1) {
+        return [new Term(parts[0]).toString(), new Term(parts[1]).toString()].join('.');
+      }
 
       return '`' + (_this$term = this.term).replace.apply(_this$term, commonReplacer).replace(/`/g, '\\`') + '`';
     }
@@ -432,12 +452,14 @@ function quoteTerm(term) {
 var SQLFunction = /*#__PURE__*/function (_SQLObject5) {
   _inherits(SQLFunction, _SQLObject5);
 
+  var _super13 = _createSuper(SQLFunction);
+
   function SQLFunction(name) {
     var _this6;
 
     _classCallCheck(this, SQLFunction);
 
-    _this6 = _possibleConstructorReturn(this, _getPrototypeOf(SQLFunction).call(this));
+    _this6 = _super13.call(this);
     _this6.name = name;
 
     for (var _len9 = arguments.length, args = new Array(_len9 > 1 ? _len9 - 1 : 0), _key9 = 1; _key9 < _len9; _key9++) {
@@ -531,12 +553,14 @@ var IPAddrFunctions = {
 var Raw = /*#__PURE__*/function (_SQLObject6) {
   _inherits(Raw, _SQLObject6);
 
+  var _super14 = _createSuper(Raw);
+
   function Raw(string) {
     var _this7;
 
     _classCallCheck(this, Raw);
 
-    _this7 = _possibleConstructorReturn(this, _getPrototypeOf(Raw).call(this));
+    _this7 = _super14.call(this);
     _this7.raw = string;
     return _this7;
   }
@@ -554,10 +578,12 @@ var Raw = /*#__PURE__*/function (_SQLObject6) {
 var Query = /*#__PURE__*/function (_SQLObject7) {
   _inherits(Query, _SQLObject7);
 
+  var _super15 = _createSuper(Query);
+
   function Query() {
     _classCallCheck(this, Query);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(Query).apply(this, arguments));
+    return _super15.apply(this, arguments);
   }
 
   return Query;
@@ -566,12 +592,14 @@ var Query = /*#__PURE__*/function (_SQLObject7) {
 var Select = /*#__PURE__*/function (_Query) {
   _inherits(Select, _Query);
 
+  var _super16 = _createSuper(Select);
+
   function Select() {
     var _this8;
 
     _classCallCheck(this, Select);
 
-    _this8 = _possibleConstructorReturn(this, _getPrototypeOf(Select).call(this));
+    _this8 = _super16.call(this);
     _this8.tables = [];
     _this8.conditions = new Conjunction();
     _this8.having_conditions = new Conjunction();
@@ -626,9 +654,18 @@ var Select = /*#__PURE__*/function (_Query) {
       }
 
       tables = tables.map(function (table) {
-        if (typeof table === "string") return [table, table];
-        if (Array.isArray(table)) return table;
-        return [Object.keys(table)[0], Object.values(table)[0]];
+        if (typeof table === "string") return [quoteTerm(table)];
+
+        if (Array.isArray(table)) {
+          if (table[0] instanceof Select) table[0] = '(' + table[0].toString() + ')';else table[0] = quoteTerm(table[0]);
+          table[1] = quoteTerm(table[1]);
+          return table;
+        }
+
+        if (table instanceof Select) return ['(' + table.toString() + ')'];
+        var alias = Object.values(table)[0];
+        if (alias instanceof Select) alias = '(' + alias.toString() + ')';else alias = quoteTerm(alias);
+        return [alias, quoteTerm(Object.keys(table)[0])];
       });
       this.tables = tables;
       return this;
@@ -748,7 +785,7 @@ var Select = /*#__PURE__*/function (_Query) {
       }
 
       var from = this.from().map(function (table) {
-        return table[0] === table[1] ? quoteTerm(table[0]) : quoteTerm(table[0]) + ' as ' + quoteTerm(table[1]);
+        return table.length === 1 ? table[0] : table[0] + ' as ' + table[1];
       });
       from = from.length ? "from " + from.join() : "";
       var prewhere = this.preconditions.length ? " prewhere " + this.preconditions : "";
@@ -784,10 +821,16 @@ var Utility = {
   term: quoteTerm,
   raw: function raw(s) {
     return new Raw(s);
+  },
+  "in": function _in(col, values) {
+    return new In(col, null, values);
+  },
+  notIn: function notIn(col, values) {
+    return new NotIn(col, null, values);
   }
 };
 
-var Dialect = _objectSpread({}, Operators, {}, AggregateFunctions, {}, ArithmeticFunctions, {}, TimeFunctions, {}, IPAddrFunctions, {}, Consts, {}, Queries, {}, Utility);
+var Dialect = _objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread({}, Operators), AggregateFunctions), ArithmeticFunctions), TimeFunctions), IPAddrFunctions), Consts), Queries), Utility);
 
 var _default = Dialect;
 exports["default"] = _default;
