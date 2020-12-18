@@ -830,15 +830,6 @@ var Utility = {
   raw: function raw(s) {
     return new Raw(s);
   },
-  "in": function _in(col, values) {
-    return new In(col, null, values);
-  },
-  notIn: function notIn(col, values) {
-    return new NotIn(col, null, values);
-  },
-  cast: function cast(thing, t) {
-    return new SQLFunction('cast', thing, quoteVal(t));
-  },
   Condition: function Condition() {
     for (var _len16 = arguments.length, args = new Array(_len16), _key16 = 0; _key16 < _len16; _key16++) {
       args[_key16] = arguments[_key16];
@@ -879,6 +870,15 @@ var Shortcuts = {
   },
   Gt: function Gt(col, val) {
     return new Conjunction(col, Consts.GT, val);
+  },
+  "in": function _in(col, values) {
+    return new In(col, null, values);
+  },
+  notIn: function notIn(col, values) {
+    return new NotIn(col, null, values);
+  },
+  cast: function cast(thing, t) {
+    return new SQLFunction('cast', thing, quoteVal(t));
   }
 };
 

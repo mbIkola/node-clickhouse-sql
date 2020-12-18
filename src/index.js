@@ -533,9 +533,6 @@ const Utility = {
   quoteVal, val: quoteVal,
   quoteTerm, term: quoteTerm,
   raw: (s) => new Raw(s),
-  in: (col, values) => new In(col, null, values),
-  notIn: (col, values) => new NotIn(col, null, values),
-  cast: (thing, t) => new SQLFunction('cast', thing, quoteVal(t)),
   Condition: (...args) => new Condition(...args),
 };
 
@@ -549,6 +546,9 @@ const Shortcuts = {
   Lte: (col, val) => new Condition(col, Consts.LTE, val),
   Lt: (col, val) => new Condition(col, Consts.LT, val),
   Gt: (col, val) => new Conjunction(col, Consts.GT, val),
+  in: (col, values) => new In(col, null, values),
+  notIn: (col, values) => new NotIn(col, null, values),
+  cast: (thing, t) => new SQLFunction('cast', thing, quoteVal(t)),
 };
 
 
