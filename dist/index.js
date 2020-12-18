@@ -1,5 +1,7 @@
 "use strict";
 
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -17,8 +19,6 @@ function _get(target, property, receiver) { if (typeof Reflect !== "undefined" &
 
 function _superPropBase(object, property) { while (!Object.prototype.hasOwnProperty.call(object, property)) { object = _getPrototypeOf(object); if (object === null) break; } return object; }
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
@@ -27,7 +27,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function () { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
@@ -161,7 +161,7 @@ var Conjunction = /*#__PURE__*/function (_Conditions2) {
   return Conjunction;
 }(Conditions);
 
-var Condition = /*#__PURE__*/function (_SQLObject2) {
+var _Condition3 = /*#__PURE__*/function (_SQLObject2) {
   _inherits(Condition, _SQLObject2);
 
   var _super4 = _createSuper(Condition);
@@ -172,9 +172,9 @@ var Condition = /*#__PURE__*/function (_SQLObject2) {
     _classCallCheck(this, Condition);
 
     _this2 = _super4.call(this);
-    _this2.column = column;
+    _this2.column = quoteTerm(column);
     _this2.operator = operator;
-    _this2.value = value;
+    _this2.value = value instanceof SQLObject ? value : quoteVal(value);
     return _this2;
   }
 
@@ -182,7 +182,7 @@ var Condition = /*#__PURE__*/function (_SQLObject2) {
     key: "toString",
     value: function toString() {
       if (this.operator) {
-        return [quoteTerm(this.column), this.operator, quoteVal(this.value)].join(' ');
+        return [this.column, this.operator, this.value].join(' ');
       } else {
         return this.column;
       }
@@ -211,7 +211,7 @@ var Negation = /*#__PURE__*/function (_Condition) {
   }]);
 
   return Negation;
-}(Condition);
+}(_Condition3);
 
 var InclusionOperator = /*#__PURE__*/function (_Condition2) {
   _inherits(InclusionOperator, _Condition2);
@@ -231,14 +231,14 @@ var InclusionOperator = /*#__PURE__*/function (_Condition2) {
   _createClass(InclusionOperator, [{
     key: "toString",
     value: function toString() {
-      return [this.column, this.operator, "(", Array.isArray(this.value) ? this.value.map(function (val) {
+      return [quoteTerm(this.column), " ", this.operator, " (", Array.isArray(this.value) ? this.value.map(function (val) {
         return quoteVal(val);
       }).join(',') : this.value, ")"].join('');
     }
   }]);
 
   return InclusionOperator;
-}(Condition);
+}(_Condition3);
 
 var In = /*#__PURE__*/function (_InclusionOperator) {
   _inherits(In, _InclusionOperator);
@@ -329,13 +329,13 @@ function createCondition() {
 
   switch (args.length) {
     case 1:
-      return args[0] instanceof Condition ? args[0] : new Condition(args[0]);
+      return args[0] instanceof _Condition3 ? args[0] : new _Condition3(args[0]);
 
     case 2:
-      return new Condition(args[0], EQUALS, args[1]);
+      return new _Condition3(args[0], EQUALS, args[1]);
 
     case 3:
-      return _construct(Condition, args);
+      return _construct(_Condition3, args);
 
     default:
       throw new Error("Invalid condition args: ", args);
@@ -427,6 +427,12 @@ var Term = /*#__PURE__*/function (_SQLObject4) {
     key: "toString",
     value: function toString() {
       var _this$term;
+
+      var parts = this.term.split('.');
+
+      if (parts.length > 1) {
+        return [new Term(parts[0]).toString(), new Term(parts[1]).toString()].join('.');
+      }
 
       return '`' + (_this$term = this.term).replace.apply(_this$term, commonReplacer).replace(/`/g, '\\`') + '`';
     }
@@ -605,6 +611,7 @@ var Select = /*#__PURE__*/function (_Query) {
     _this8.sampling = undefined;
     _this8.limits = undefined;
     _this8.limitbycolumns = undefined;
+    _this8.fmt = undefined;
     return _this8;
   }
 
@@ -647,9 +654,18 @@ var Select = /*#__PURE__*/function (_Query) {
       }
 
       tables = tables.map(function (table) {
-        if (typeof table === "string") return [table, table];
-        if (Array.isArray(table)) return table;
-        return [Object.keys(table)[0], Object.values(table)[0]];
+        if (typeof table === "string") return [quoteTerm(table)];
+
+        if (Array.isArray(table)) {
+          if (table[0] instanceof Select) table[0] = '(' + table[0].toString() + ')';else table[0] = quoteTerm(table[0]);
+          table[1] = quoteTerm(table[1]);
+          return table;
+        }
+
+        if (table instanceof Select) return ['(' + table.toString() + ')'];
+        var alias = Object.values(table)[0];
+        if (alias instanceof Select) alias = '(' + alias.toString() + ')';else alias = quoteTerm(alias);
+        return [alias, quoteTerm(Object.keys(table)[0])];
       });
       this.tables = tables;
       return this;
@@ -676,7 +692,12 @@ var Select = /*#__PURE__*/function (_Query) {
   }, {
     key: "where",
     value: function where() {
-      this.conditions.push(createCondition.apply(void 0, arguments));
+      if (arguments.length === 1 && (arguments.length <= 0 ? undefined : arguments[0]) instanceof _Condition3) {
+        this.conditions.push(arguments.length <= 0 ? undefined : arguments[0]);
+      } else {
+        this.conditions.push(createCondition.apply(void 0, arguments));
+      }
+
       return this;
     }
   }, {
@@ -750,6 +771,12 @@ var Select = /*#__PURE__*/function (_Query) {
       return this;
     }
   }, {
+    key: "format",
+    value: function format(fmt) {
+      this.fmt = fmt;
+      return this;
+    }
+  }, {
     key: "toString",
     value: function toString() {
       var select_list;
@@ -763,25 +790,29 @@ var Select = /*#__PURE__*/function (_Query) {
       }
 
       var from = this.from().map(function (table) {
-        return table[0] === table[1] ? quoteTerm(table[0]) : quoteTerm(table[0]) + ' as ' + quoteTerm(table[1]);
+        return table.length === 1 ? table[0] : table[0] + ' as ' + table[1];
       });
       from = from.length ? "from " + from.join() : "";
-      var prewhere = this.preconditions.length ? " prewhere " + this.preconditions : "";
-      var where = this.conditions.length ? " where " + this.conditions : "";
-      var groupby = this.aggregations.length ? " group by " + this.aggregations.map(function (c) {
+      var prewhere = this.preconditions.length ? "prewhere " + this.preconditions : "";
+      var where = this.conditions.length ? "where " + this.conditions : "";
+      var groupby = this.aggregations.length ? "group by " + this.aggregations.map(function (c) {
         return quoteTerm(c);
       }).join() : "";
-      var having = this.having_conditions.length ? " having " + this.having_conditions : "";
+      var having = this.having_conditions.length ? "having " + this.having_conditions : "";
       var order_by = this.order_expressions.length ? "order by " + this.order_expressions.map(function (e) {
         return Array.isArray(e) ? quoteTerm(e[0]) + " " + e[1] : quoteTerm(e);
       }).join() : "";
-      var with_totals = this.request_totals ? " with totals " : "";
-      var sample = this.sampling ? " sample " + this.sampling : "";
-      var limitby = this.limitbycolumns && this.limitbycolumns.columns.length ? " limit " + this.limitbycolumns.limit + " by " + this.limitbycolumns.columns.map(function (c) {
+      var with_totals = this.request_totals ? "with totals" : "";
+      var sample = this.sampling ? "sample " + this.sampling : "";
+      var limitby = this.limitbycolumns && this.limitbycolumns.columns.length ? "limit " + this.limitbycolumns.limit + " by " + this.limitbycolumns.columns.map(function (c) {
         return quoteTerm(c);
       }).join() : '';
-      var limit = this.limits ? " limit " + this.limits.number + (typeof this.limits.offset === "undefined" ? "" : "," + this.limits.offset) : '';
-      return ["select ", select_list, from, sample, prewhere, where, groupby, with_totals, having, order_by, limitby, limit].join(' ');
+      var limit = this.limits ? "limit " + this.limits.number + (typeof this.limits.offset === "undefined" ? "" : "," + this.limits.offset) : '';
+      var format = this.fmt ? " format " + this.fmt.toUpperCase() : "";
+      var parts = ["select", select_list, from, sample, prewhere, where, groupby, with_totals, having, order_by, limitby, limit, format].filter(function (v) {
+        return v != '';
+      });
+      return parts.join(' ');
     }
   }]);
 
@@ -798,10 +829,60 @@ var Utility = {
   term: quoteTerm,
   raw: function raw(s) {
     return new Raw(s);
+  },
+  Condition: function Condition() {
+    for (var _len16 = arguments.length, args = new Array(_len16), _key16 = 0; _key16 < _len16; _key16++) {
+      args[_key16] = arguments[_key16];
+    }
+
+    return _construct(_Condition3, args);
+  }
+};
+var Shortcuts = {
+  And: function And() {
+    for (var _len17 = arguments.length, args = new Array(_len17), _key17 = 0; _key17 < _len17; _key17++) {
+      args[_key17] = arguments[_key17];
+    }
+
+    return _construct(Conjunction, args);
+  },
+  Or: function Or() {
+    for (var _len18 = arguments.length, args = new Array(_len18), _key18 = 0; _key18 < _len18; _key18++) {
+      args[_key18] = arguments[_key18];
+    }
+
+    return _construct(Disjunction, args);
+  },
+  Eq: function Eq(col, val) {
+    return new _Condition3(col, Consts.EQ, val);
+  },
+  Ne: function Ne(col, val) {
+    return new _Condition3(col, Consts.NE, val);
+  },
+  Gte: function Gte(col, val) {
+    return new _Condition3(col, Consts.GTE, val);
+  },
+  Lte: function Lte(col, val) {
+    return new _Condition3(col, Consts.LTE, val);
+  },
+  Lt: function Lt(col, val) {
+    return new _Condition3(col, Consts.LT, val);
+  },
+  Gt: function Gt(col, val) {
+    return new Conjunction(col, Consts.GT, val);
+  },
+  "in": function _in(col, values) {
+    return new In(col, null, values);
+  },
+  notIn: function notIn(col, values) {
+    return new NotIn(col, null, values);
+  },
+  cast: function cast(thing, t) {
+    return new SQLFunction('cast', thing, quoteVal(t));
   }
 };
 
-var Dialect = _objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread({}, Operators), AggregateFunctions), ArithmeticFunctions), TimeFunctions), IPAddrFunctions), Consts), Queries), Utility);
+var Dialect = _objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread({}, Operators), AggregateFunctions), ArithmeticFunctions), TimeFunctions), IPAddrFunctions), Consts), Queries), Utility), Shortcuts);
 
 var _default = Dialect;
 exports["default"] = _default;

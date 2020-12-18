@@ -72,14 +72,14 @@ class Conjunction extends Conditions {
 class Condition extends SQLObject {
   constructor(column, operator, value) {
     super();
-    this.column = column;
+    this.column = quoteTerm(column);
     this.operator = operator;
-    this.value = value;
+    this.value = (value instanceof SQLObject) ? value : quoteVal(value);
   }
 
   toString() {
     if (this.operator) {
-      return [quoteTerm(this.column), this.operator, quoteVal(this.value)].join(' ');
+      return [this.column, this.operator, this.value].join(' ');
     } else {
       return this.column;
     }
@@ -104,9 +104,10 @@ class InclusionOperator extends Condition {
 
   toString() {
     return [
-      this.column,
+      quoteTerm(this.column),
+      " ",
       this.operator,
-      "(",
+      " (",
       Array.isArray(this.value)
         ? this.value.map(val => quoteVal(val)).join(',')
         : this.value,
@@ -207,6 +208,11 @@ class Term extends SQLObject {
   }
 
   toString() {
+    const parts = this.term.split('.');
+    if (parts.length > 1) {
+      return [new Term(parts[0]).toString(), new Term(parts[1]).toString()].join('.');
+    }
+
     return '`' + this.term.replace(...commonReplacer).replace(/`/g, '\\`') + '`';
   }
 }
@@ -330,6 +336,7 @@ class Select extends Query {
     this.sampling = undefined;
     this.limits = undefined;
     this.limitbycolumns = undefined;
+    this.fmt = undefined;
   }
 
   select(...columns) {
@@ -355,10 +362,20 @@ class Select extends Query {
     }
 
     tables = tables.map(table => {
-      if (typeof table === "string") return [table, table];
-      if (Array.isArray(table)) return table;
+      if (typeof table === "string") return [quoteTerm(table)];
+      if (Array.isArray(table)) {
+        if (table[0] instanceof Select) table[0] = '(' + table[0].toString() + ')';
+        else table[0] = quoteTerm(table[0]);
+        table[1] = quoteTerm(table[1]);
+        return table;
+      }
+      if (table instanceof Select) return ['(' + table.toString() + ')'];
 
-      return [Object.keys(table)[0], Object.values(table)[0]]
+      let alias = Object.values(table)[0];
+      if (alias instanceof Select) alias = '(' + alias.toString() + ')';
+      else alias = quoteTerm(alias);
+
+      return [alias, quoteTerm(Object.keys(table)[0])];
     });
 
     this.tables = tables;
@@ -382,7 +399,11 @@ class Select extends Query {
   }
 
   where(...args) {
-    this.conditions.push(createCondition(...args));
+    if (args.length === 1 && args[0] instanceof Condition) {
+      this.conditions.push(args[0]);
+    } else {
+      this.conditions.push(createCondition(...args));
+    }
     return this;
   }
 
@@ -426,6 +447,11 @@ class Select extends Query {
     return this;
   }
 
+  format(fmt) {
+    this.fmt = fmt;
+    return this;
+  }
+
   toString() {
     let select_list;
     if (this.select_list.length === 0) {
@@ -441,40 +467,44 @@ class Select extends Query {
 
     let from = this.from().map(
       (table) =>
-        table[0] === table[1]
-          ? quoteTerm(table[0])
-          : quoteTerm(table[0]) + ' as ' + quoteTerm(table[1])
+        table.length === 1
+          ? table[0]
+          : table[0] + ' as ' + table[1]
     );
     from = from.length ? "from " + from.join() : "";
 
 
-    let prewhere = this.preconditions.length ? " prewhere " + this.preconditions : "";
-    let where = this.conditions.length ? " where " + this.conditions : "";
+    let prewhere = this.preconditions.length ? "prewhere " + this.preconditions : "";
+    let where = this.conditions.length ? "where " + this.conditions : "";
 
     let groupby = this.aggregations.length
-      ? " group by " + this.aggregations.map(c => quoteTerm(c)).join()
+      ? "group by " + this.aggregations.map(c => quoteTerm(c)).join()
       : "";
 
-    let having = this.having_conditions.length ? " having " + this.having_conditions : "";
+    let having = this.having_conditions.length ? "having " + this.having_conditions : "";
 
     let order_by = this.order_expressions.length
       ? "order by " + this.order_expressions.map(e => Array.isArray(e) ? quoteTerm(e[0]) + " " + e[1] : quoteTerm(e)).join()
       : "";
 
 
-    let with_totals = this.request_totals ? " with totals " : "";
-    let sample = this.sampling ? " sample " + this.sampling : "";
+    let with_totals = this.request_totals ? "with totals" : "";
+    let sample = this.sampling ? "sample " + this.sampling : "";
 
     let limitby = this.limitbycolumns && this.limitbycolumns.columns.length
-      ? " limit " + this.limitbycolumns.limit + " by " + this.limitbycolumns.columns.map(c => quoteTerm(c)).join()
+      ? "limit " + this.limitbycolumns.limit + " by " + this.limitbycolumns.columns.map(c => quoteTerm(c)).join()
       : '';
 
     let limit = this.limits
-      ? " limit " + this.limits.number + (typeof this.limits.offset === "undefined" ? "" : "," + this.limits.offset)
+      ? "limit " + this.limits.number + (typeof this.limits.offset === "undefined" ? "" : "," + this.limits.offset)
       : '';
 
-    return [
-      "select ",
+    let format = this.fmt
+      ? " format " + this.fmt.toUpperCase()
+      : "";
+
+    const parts = [
+      "select",
       select_list,
       from,
       sample,
@@ -485,9 +515,11 @@ class Select extends Query {
       having,
       order_by,
       limitby,
-      limit
-    ].join(' ');
+      limit,
+      format,
+    ].filter((v) => v != '');
 
+    return parts.join(' ');
   }
 }
 
@@ -496,11 +528,27 @@ const Queries = {
   Select
 };
 
+
 const Utility = {
   quoteVal, val: quoteVal,
   quoteTerm, term: quoteTerm,
   raw: (s) => new Raw(s),
+  Condition: (...args) => new Condition(...args),
+};
 
+
+const Shortcuts = {
+  And: (...args) => new Conjunction(...args),
+  Or: (...args) => new Disjunction(...args),
+  Eq: (col, val) => new Condition(col, Consts.EQ, val),
+  Ne: (col, val) => new Condition(col, Consts.NE, val),
+  Gte: (col, val) => new Condition(col, Consts.GTE, val),
+  Lte: (col, val) => new Condition(col, Consts.LTE, val),
+  Lt: (col, val) => new Condition(col, Consts.LT, val),
+  Gt: (col, val) => new Conjunction(col, Consts.GT, val),
+  in: (col, values) => new In(col, null, values),
+  notIn: (col, values) => new NotIn(col, null, values),
+  cast: (thing, t) => new SQLFunction('cast', thing, quoteVal(t)),
 };
 
 
@@ -512,6 +560,7 @@ const Dialect = {
   ...IPAddrFunctions,
   ...Consts,
   ...Queries,
-  ...Utility
+  ...Utility,
+  ...Shortcuts,
 };
 export default Dialect;
