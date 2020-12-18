@@ -38,7 +38,7 @@ describe('main', function() {
         .limitBy(5, 'presetId')
         .format('json');
 
-      assert.equal(sql.toString(), "select  " +
+      equalsIgnoringWhitespaces(sql.toString(), "select " +
         "`presetId`,toStartOfMinute(`ts`) as `t`," +
         "uniq(`minerId`),sum(`cpuTime`),sum(`hashes`)," +
         "divide(sum(`hashes`),60) as `hashrate`,avg(`blockReward`)," +
@@ -63,14 +63,13 @@ describe('main', function() {
         .orWhere('annihilation', s.LESS_OR_EQUALS, s.any('Suffocation', 'disintegration'))
           .toString();
 
-      assert.equal(
-        q.trim(),
-        "select  * from `table0`,`table1` as `alias1`,`table2` as `alias2`   " +
-        "prewhere ((`ts` < toStartOfMinute(now()))) or (`ts` > toStartOfYear(now()))  " +
+      equalsIgnoringWhitespaces(
+        q,
+        "select * from `table0`,`table1` as `alias1`,`table2` as `alias2` " +
+        "prewhere ((`ts` < toStartOfMinute(now()))) or (`ts` > toStartOfYear(now())) " +
         "where ((`my life` = 'is taken')) or (`annihilation` <= any(`Suffocation`,`disintegration`))"
       );
     });
-
 
     it('in operator', () => {
       const s = Dialect;
@@ -82,8 +81,8 @@ describe('main', function() {
         .where(s.in('a', [1, 2, 3]))
         .toString();
 
-      assert.equal(
-        q.trim(),
+      equalsIgnoringWhitespaces(
+        q,
         "select  `a`,`b` from `table0`    where (`a` in (1,2,3))"
       );
     });
@@ -112,4 +111,21 @@ describe('main', function() {
         "where (`a`.`c` = `b`.`c`)"
       );
     });
+
+    it('mixed boolean operators', () => {
+      const s = Dialect;
+      let selectBuilder = new Dialect.Select();
+
+      const q = selectBuilder
+        .from('table0')
+        .where(s.Or(s.Eq('a', 1), s.Eq('a', 2)))
+        .where(s.And(s.Eq('b', 1), s.Eq('c', 1)))
+        .toString();
+
+      equalsIgnoringWhitespaces(
+        q,
+        "select * from `table0` where ((`a` = 1) or (`a` = 2)) and ((`b` = 1) and (`c` = 1))"
+      )
+    });
+
 });

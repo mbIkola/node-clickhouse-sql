@@ -161,7 +161,7 @@ var Conjunction = /*#__PURE__*/function (_Conditions2) {
   return Conjunction;
 }(Conditions);
 
-var Condition = /*#__PURE__*/function (_SQLObject2) {
+var _Condition3 = /*#__PURE__*/function (_SQLObject2) {
   _inherits(Condition, _SQLObject2);
 
   var _super4 = _createSuper(Condition);
@@ -211,7 +211,7 @@ var Negation = /*#__PURE__*/function (_Condition) {
   }]);
 
   return Negation;
-}(Condition);
+}(_Condition3);
 
 var InclusionOperator = /*#__PURE__*/function (_Condition2) {
   _inherits(InclusionOperator, _Condition2);
@@ -238,7 +238,7 @@ var InclusionOperator = /*#__PURE__*/function (_Condition2) {
   }]);
 
   return InclusionOperator;
-}(Condition);
+}(_Condition3);
 
 var In = /*#__PURE__*/function (_InclusionOperator) {
   _inherits(In, _InclusionOperator);
@@ -329,13 +329,13 @@ function createCondition() {
 
   switch (args.length) {
     case 1:
-      return args[0] instanceof Condition ? args[0] : new Condition(args[0]);
+      return args[0] instanceof _Condition3 ? args[0] : new _Condition3(args[0]);
 
     case 2:
-      return new Condition(args[0], EQUALS, args[1]);
+      return new _Condition3(args[0], EQUALS, args[1]);
 
     case 3:
-      return _construct(Condition, args);
+      return _construct(_Condition3, args);
 
     default:
       throw new Error("Invalid condition args: ", args);
@@ -692,7 +692,12 @@ var Select = /*#__PURE__*/function (_Query) {
   }, {
     key: "where",
     value: function where() {
-      this.conditions.push(createCondition.apply(void 0, arguments));
+      if (arguments.length === 1 && (arguments.length <= 0 ? undefined : arguments[0]) instanceof _Condition3) {
+        this.conditions.push(arguments.length <= 0 ? undefined : arguments[0]);
+      } else {
+        this.conditions.push(createCondition.apply(void 0, arguments));
+      }
+
       return this;
     }
   }, {
@@ -788,23 +793,26 @@ var Select = /*#__PURE__*/function (_Query) {
         return table.length === 1 ? table[0] : table[0] + ' as ' + table[1];
       });
       from = from.length ? "from " + from.join() : "";
-      var prewhere = this.preconditions.length ? " prewhere " + this.preconditions : "";
-      var where = this.conditions.length ? " where " + this.conditions : "";
-      var groupby = this.aggregations.length ? " group by " + this.aggregations.map(function (c) {
+      var prewhere = this.preconditions.length ? "prewhere " + this.preconditions : "";
+      var where = this.conditions.length ? "where " + this.conditions : "";
+      var groupby = this.aggregations.length ? "group by " + this.aggregations.map(function (c) {
         return quoteTerm(c);
       }).join() : "";
-      var having = this.having_conditions.length ? " having " + this.having_conditions : "";
+      var having = this.having_conditions.length ? "having " + this.having_conditions : "";
       var order_by = this.order_expressions.length ? "order by " + this.order_expressions.map(function (e) {
         return Array.isArray(e) ? quoteTerm(e[0]) + " " + e[1] : quoteTerm(e);
       }).join() : "";
-      var with_totals = this.request_totals ? " with totals " : "";
-      var sample = this.sampling ? " sample " + this.sampling : "";
-      var limitby = this.limitbycolumns && this.limitbycolumns.columns.length ? " limit " + this.limitbycolumns.limit + " by " + this.limitbycolumns.columns.map(function (c) {
+      var with_totals = this.request_totals ? "with totals" : "";
+      var sample = this.sampling ? "sample " + this.sampling : "";
+      var limitby = this.limitbycolumns && this.limitbycolumns.columns.length ? "limit " + this.limitbycolumns.limit + " by " + this.limitbycolumns.columns.map(function (c) {
         return quoteTerm(c);
       }).join() : '';
-      var limit = this.limits ? " limit " + this.limits.number + (typeof this.limits.offset === "undefined" ? "" : "," + this.limits.offset) : '';
+      var limit = this.limits ? "limit " + this.limits.number + (typeof this.limits.offset === "undefined" ? "" : "," + this.limits.offset) : '';
       var format = this.fmt ? " format " + this.fmt.toUpperCase() : "";
-      return ["select ", select_list, from, sample, prewhere, where, groupby, with_totals, having, order_by, limitby, limit, format].join(' ');
+      var parts = ["select", select_list, from, sample, prewhere, where, groupby, with_totals, having, order_by, limitby, limit, format].filter(function (v) {
+        return v != '';
+      });
+      return parts.join(' ');
     }
   }]);
 
@@ -827,10 +835,54 @@ var Utility = {
   },
   notIn: function notIn(col, values) {
     return new NotIn(col, null, values);
+  },
+  cast: function cast(thing, t) {
+    return new SQLFunction('cast', thing, quoteVal(t));
+  },
+  Condition: function Condition() {
+    for (var _len16 = arguments.length, args = new Array(_len16), _key16 = 0; _key16 < _len16; _key16++) {
+      args[_key16] = arguments[_key16];
+    }
+
+    return _construct(_Condition3, args);
+  }
+};
+var Shortcuts = {
+  And: function And() {
+    for (var _len17 = arguments.length, args = new Array(_len17), _key17 = 0; _key17 < _len17; _key17++) {
+      args[_key17] = arguments[_key17];
+    }
+
+    return _construct(Conjunction, args);
+  },
+  Or: function Or() {
+    for (var _len18 = arguments.length, args = new Array(_len18), _key18 = 0; _key18 < _len18; _key18++) {
+      args[_key18] = arguments[_key18];
+    }
+
+    return _construct(Disjunction, args);
+  },
+  Eq: function Eq(col, val) {
+    return new _Condition3(col, Consts.EQ, val);
+  },
+  Ne: function Ne(col, val) {
+    return new _Condition3(col, Consts.NE, val);
+  },
+  Gte: function Gte(col, val) {
+    return new _Condition3(col, Consts.GTE, val);
+  },
+  Lte: function Lte(col, val) {
+    return new _Condition3(col, Consts.LTE, val);
+  },
+  Lt: function Lt(col, val) {
+    return new _Condition3(col, Consts.LT, val);
+  },
+  Gt: function Gt(col, val) {
+    return new Conjunction(col, Consts.GT, val);
   }
 };
 
-var Dialect = _objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread({}, Operators), AggregateFunctions), ArithmeticFunctions), TimeFunctions), IPAddrFunctions), Consts), Queries), Utility);
+var Dialect = _objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread({}, Operators), AggregateFunctions), ArithmeticFunctions), TimeFunctions), IPAddrFunctions), Consts), Queries), Utility), Shortcuts);
 
 var _default = Dialect;
 exports["default"] = _default;
