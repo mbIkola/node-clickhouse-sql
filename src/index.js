@@ -495,8 +495,9 @@ class Select extends Query {
       ? "limit " + this.limitbycolumns.limit + " by " + this.limitbycolumns.columns.map(c => quoteTerm(c)).join()
       : '';
 
+
     let limit = this.limits
-      ? "limit " + this.limits.number + (typeof this.limits.offset === "undefined" ? "" : "," + this.limits.offset)
+      ? "limit " + ((typeof this.limits.offset === "undefined") ? this.limits.number : this.limits.offset + ", " + this.limits.number)
       : '';
 
     let format = this.fmt
