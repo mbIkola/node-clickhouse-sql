@@ -29,6 +29,7 @@ describe('main', function() {
           s.min('netDiff'),
           [s.sum(s.multiply(s.multiply('hashes', s.divide('blockReward', 'netDiff')), 0.8)), 'approx reward in XMR']
         )
+        .join('foo', 'left', s.Condition('col1', s.EQ, s.quoteTerm('col2')))
         .prewhere('ts', s.LESS, s.toStartOfMinute(s.now()))
         .prewhere('accountId', s.EQUALS, '5a7484afe90bab6ecc346aa4')
         .groupBy('presetId')
@@ -49,6 +50,7 @@ describe('main', function() {
         "avg(`avgReward`),max(`netDiff`),min(`netDiff`)," +
         "sum(multiply(multiply(`hashes`,divide(`blockReward`,`netDiff`)),0.8)) as `approx reward in XMR` " +
         "from `solved_hashes`   " +
+        "leftjoin`foo`on`col1`=`col2`" +
         "prewhere (`ts` < toStartOfMinute(now())) and (`accountId` = '5a7484afe90bab6ecc346aa4')   " +
         "group by `presetId`,`t`  with totals   " +
         "order by `t`  limit 5 by `presetId`  limit 1000  format JSON")
