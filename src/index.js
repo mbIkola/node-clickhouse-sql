@@ -326,6 +326,7 @@ class Select extends Query {
     super();
 
     this.tables = [];
+    this.joins = [];
     this.conditions = new Conjunction();
     this.having_conditions = new Conjunction();
     this.preconditions = new Conjunction();
@@ -379,6 +380,21 @@ class Select extends Query {
     });
 
     this.tables = tables;
+    return this;
+  }
+
+  join(table, type, ...conditions) {
+    if (typeof table === "string") table = quoteTerm(table);
+
+    if (!Array.isArray(conditions)) {
+      conditions = [conditions];
+    }
+
+    if (conditions.length > 1) {
+      conditions = Conjunction(conditions);
+    }
+
+    this.joins.push({ table, type, conditions });
     return this;
   }
 
@@ -464,7 +480,6 @@ class Select extends Query {
       ).join();
     }
 
-
     let from = this.from().map(
       (table) =>
         table.length === 1
@@ -473,6 +488,9 @@ class Select extends Query {
     );
     from = from.length ? "from " + from.join() : "";
 
+    let join = this.joins.map((join) => {
+      return ((join.type) ? join.type + ' ' : '') + 'join ' + join.table + ' on ' + join.conditions;
+    }).join(' ');
 
     let prewhere = this.preconditions.length ? "prewhere " + this.preconditions : "";
     let where = this.conditions.length ? "where " + this.conditions : "";
@@ -486,7 +504,6 @@ class Select extends Query {
     let order_by = this.order_expressions.length
       ? "order by " + this.order_expressions.map(e => Array.isArray(e) ? quoteTerm(e[0]) + " " + e[1] : quoteTerm(e)).join()
       : "";
-
 
     let with_totals = this.request_totals ? "with totals" : "";
     let sample = this.sampling ? "sample " + this.sampling : "";
@@ -508,6 +525,7 @@ class Select extends Query {
       "select",
       select_list,
       from,
+      join,
       sample,
       prewhere,
       where,

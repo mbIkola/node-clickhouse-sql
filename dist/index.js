@@ -601,6 +601,7 @@ var Select = /*#__PURE__*/function (_Query) {
 
     _this8 = _super16.call(this);
     _this8.tables = [];
+    _this8.joins = [];
     _this8.conditions = new Conjunction();
     _this8.having_conditions = new Conjunction();
     _this8.preconditions = new Conjunction();
@@ -671,6 +672,30 @@ var Select = /*#__PURE__*/function (_Query) {
       return this;
     }
   }, {
+    key: "join",
+    value: function join(table, type) {
+      for (var _len13 = arguments.length, conditions = new Array(_len13 > 2 ? _len13 - 2 : 0), _key13 = 2; _key13 < _len13; _key13++) {
+        conditions[_key13 - 2] = arguments[_key13];
+      }
+
+      if (typeof table === "string") table = quoteTerm(table);
+
+      if (!Array.isArray(conditions)) {
+        conditions = [conditions];
+      }
+
+      if (conditions.length > 1) {
+        conditions = Conjunction(conditions);
+      }
+
+      this.joins.push({
+        table: table,
+        type: type,
+        conditions: conditions
+      });
+      return this;
+    }
+  }, {
     key: "prewhere",
     value: function prewhere() {
       this.preconditions.push(createCondition.apply(void 0, arguments));
@@ -718,8 +743,8 @@ var Select = /*#__PURE__*/function (_Query) {
     value: function groupBy() {
       var _this10 = this;
 
-      for (var _len13 = arguments.length, aggregateExpressions = new Array(_len13), _key13 = 0; _key13 < _len13; _key13++) {
-        aggregateExpressions[_key13] = arguments[_key13];
+      for (var _len14 = arguments.length, aggregateExpressions = new Array(_len14), _key14 = 0; _key14 < _len14; _key14++) {
+        aggregateExpressions[_key14] = arguments[_key14];
       }
 
       aggregateExpressions.forEach(function (a) {
@@ -746,8 +771,8 @@ var Select = /*#__PURE__*/function (_Query) {
   }, {
     key: "limitBy",
     value: function limitBy(limit) {
-      for (var _len14 = arguments.length, columns = new Array(_len14 > 1 ? _len14 - 1 : 0), _key14 = 1; _key14 < _len14; _key14++) {
-        columns[_key14 - 1] = arguments[_key14];
+      for (var _len15 = arguments.length, columns = new Array(_len15 > 1 ? _len15 - 1 : 0), _key15 = 1; _key15 < _len15; _key15++) {
+        columns[_key15 - 1] = arguments[_key15];
       }
 
       this.limitbycolumns = {
@@ -761,8 +786,8 @@ var Select = /*#__PURE__*/function (_Query) {
     value: function orderBy() {
       var _this11 = this;
 
-      for (var _len15 = arguments.length, expressions = new Array(_len15), _key15 = 0; _key15 < _len15; _key15++) {
-        expressions[_key15] = arguments[_key15];
+      for (var _len16 = arguments.length, expressions = new Array(_len16), _key16 = 0; _key16 < _len16; _key16++) {
+        expressions[_key16] = arguments[_key16];
       }
 
       expressions.forEach(function (e) {
@@ -793,6 +818,9 @@ var Select = /*#__PURE__*/function (_Query) {
         return table.length === 1 ? table[0] : table[0] + ' as ' + table[1];
       });
       from = from.length ? "from " + from.join() : "";
+      var join = this.joins.map(function (join) {
+        return (join.type ? join.type + ' ' : '') + 'join ' + join.table + ' on ' + join.conditions;
+      }).join(' ');
       var prewhere = this.preconditions.length ? "prewhere " + this.preconditions : "";
       var where = this.conditions.length ? "where " + this.conditions : "";
       var groupby = this.aggregations.length ? "group by " + this.aggregations.map(function (c) {
@@ -809,7 +837,7 @@ var Select = /*#__PURE__*/function (_Query) {
       }).join() : '';
       var limit = this.limits ? "limit " + (typeof this.limits.offset === "undefined" ? this.limits.number : this.limits.offset + ", " + this.limits.number) : '';
       var format = this.fmt ? " format " + this.fmt.toUpperCase() : "";
-      var parts = ["select", select_list, from, sample, prewhere, where, groupby, with_totals, having, order_by, limitby, limit, format].filter(function (v) {
+      var parts = ["select", select_list, from, join, sample, prewhere, where, groupby, with_totals, having, order_by, limitby, limit, format].filter(function (v) {
         return v != '';
       });
       return parts.join(' ');
@@ -831,8 +859,8 @@ var Utility = {
     return new Raw(s);
   },
   Condition: function Condition() {
-    for (var _len16 = arguments.length, args = new Array(_len16), _key16 = 0; _key16 < _len16; _key16++) {
-      args[_key16] = arguments[_key16];
+    for (var _len17 = arguments.length, args = new Array(_len17), _key17 = 0; _key17 < _len17; _key17++) {
+      args[_key17] = arguments[_key17];
     }
 
     return _construct(_Condition3, args);
@@ -840,15 +868,15 @@ var Utility = {
 };
 var Shortcuts = {
   And: function And() {
-    for (var _len17 = arguments.length, args = new Array(_len17), _key17 = 0; _key17 < _len17; _key17++) {
-      args[_key17] = arguments[_key17];
+    for (var _len18 = arguments.length, args = new Array(_len18), _key18 = 0; _key18 < _len18; _key18++) {
+      args[_key18] = arguments[_key18];
     }
 
     return _construct(Conjunction, args);
   },
   Or: function Or() {
-    for (var _len18 = arguments.length, args = new Array(_len18), _key18 = 0; _key18 < _len18; _key18++) {
-      args[_key18] = arguments[_key18];
+    for (var _len19 = arguments.length, args = new Array(_len19), _key19 = 0; _key19 < _len19; _key19++) {
+      args[_key19] = arguments[_key19];
     }
 
     return _construct(Disjunction, args);
