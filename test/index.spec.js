@@ -200,10 +200,6 @@ describe('main', function() {
     });
 
   it('between terms', () => {
-    // https://github.com/mbIkola/node-clickhouse-sql/issues/24
-    //SELECT count() AS count
-    //FROM tracking_events
-    //WHERE date BETWEEN '12-01-2017' AND '12-01-2018'
     const query =  new Dialect.Select();
     const col = Dialect.quoteTerm;
     const between = Dialect.between;
