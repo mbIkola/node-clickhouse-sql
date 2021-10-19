@@ -51,6 +51,8 @@ var LESS_OR_EQUALS = "<=";
 var LTE = LESS_OR_EQUALS;
 var NOT_EQUALS = "!=";
 var NE = NOT_EQUALS;
+var BETWEEN = "between";
+var AND = 'and';
 var Consts = {
   EQUALS: EQUALS,
   GREATER: GREATER,
@@ -312,6 +314,40 @@ var GlobalIn = /*#__PURE__*/function (_InclusionOperator4) {
   return GlobalIn;
 }(InclusionOperator);
 
+var Between = /*#__PURE__*/function (_SQLObject3) {
+  _inherits(Between, _SQLObject3);
+
+  var _super11 = _createSuper(Between);
+
+  function Between(column, leftBoundary, rightBoundary) {
+    var _this4;
+
+    _classCallCheck(this, Between);
+
+    _this4 = _super11.call(this);
+    _this4.column = column;
+    _this4.leftBoundary = leftBoundary;
+    _this4.rightBoundary = rightBoundary;
+    return _this4;
+  }
+
+  _createClass(Between, [{
+    key: "quoteBoundary",
+    value: function quoteBoundary(b) {
+      return b instanceof SQLObject ? b.toString() : quoteVal(b);
+    }
+  }, {
+    key: "toString",
+    value: function toString() {
+      return [quoteTerm(this.column), " ", BETWEEN, // because super class adding parents around value and I didn't find an elegant
+      // way how to avoid this. So I'm overloading toString() and copy-pasting implementation
+      this.quoteBoundary(this.leftBoundary), AND, this.quoteBoundary(this.rightBoundary)].join(' ');
+    }
+  }]);
+
+  return Between;
+}(SQLObject);
+
 var Operators = {
   Conjunction: Conjunction,
   Disjunction: Disjunction,
@@ -372,19 +408,19 @@ var commonReplacer = [/[\0\n\r\b\t\\\x1a]/g, function (s) {
   }
 }];
 
-var Value = /*#__PURE__*/function (_SQLObject3) {
-  _inherits(Value, _SQLObject3);
+var Value = /*#__PURE__*/function (_SQLObject4) {
+  _inherits(Value, _SQLObject4);
 
-  var _super11 = _createSuper(Value);
+  var _super12 = _createSuper(Value);
 
   function Value(value) {
-    var _this4;
+    var _this5;
 
     _classCallCheck(this, Value);
 
-    _this4 = _super11.call(this);
-    _this4.value = value;
-    return _this4;
+    _this5 = _super12.call(this);
+    _this5.value = value;
+    return _this5;
   }
 
   _createClass(Value, [{
@@ -413,19 +449,19 @@ var Value = /*#__PURE__*/function (_SQLObject3) {
   return Value;
 }(SQLObject);
 
-var Term = /*#__PURE__*/function (_SQLObject4) {
-  _inherits(Term, _SQLObject4);
+var Term = /*#__PURE__*/function (_SQLObject5) {
+  _inherits(Term, _SQLObject5);
 
-  var _super12 = _createSuper(Term);
+  var _super13 = _createSuper(Term);
 
   function Term(term) {
-    var _this5;
+    var _this6;
 
     _classCallCheck(this, Term);
 
-    _this5 = _super12.call(this);
-    _this5.term = term;
-    return _this5;
+    _this6 = _super13.call(this);
+    _this6.term = term;
+    return _this6;
   }
 
   _createClass(Term, [{
@@ -454,25 +490,25 @@ function quoteTerm(term) {
   return term instanceof SQLObject || Number.isFinite(term) ? term : new Term(term);
 }
 
-var SQLFunction = /*#__PURE__*/function (_SQLObject5) {
-  _inherits(SQLFunction, _SQLObject5);
+var SQLFunction = /*#__PURE__*/function (_SQLObject6) {
+  _inherits(SQLFunction, _SQLObject6);
 
-  var _super13 = _createSuper(SQLFunction);
+  var _super14 = _createSuper(SQLFunction);
 
   function SQLFunction(name) {
-    var _this6;
+    var _this7;
 
     _classCallCheck(this, SQLFunction);
 
-    _this6 = _super13.call(this);
-    _this6.name = name;
+    _this7 = _super14.call(this);
+    _this7.name = name;
 
     for (var _len9 = arguments.length, args = new Array(_len9 > 1 ? _len9 - 1 : 0), _key9 = 1; _key9 < _len9; _key9++) {
       args[_key9 - 1] = arguments[_key9];
     }
 
-    _this6.args = args;
-    return _this6;
+    _this7.args = args;
+    return _this7;
   }
 
   _createClass(SQLFunction, [{
@@ -555,19 +591,19 @@ var IPAddrFunctions = {
   IPv6StringToNum: _curry_f('IPv6StringToNum')
 };
 
-var Raw = /*#__PURE__*/function (_SQLObject6) {
-  _inherits(Raw, _SQLObject6);
+var Raw = /*#__PURE__*/function (_SQLObject7) {
+  _inherits(Raw, _SQLObject7);
 
-  var _super14 = _createSuper(Raw);
+  var _super15 = _createSuper(Raw);
 
   function Raw(string) {
-    var _this7;
+    var _this8;
 
     _classCallCheck(this, Raw);
 
-    _this7 = _super14.call(this);
-    _this7.raw = string;
-    return _this7;
+    _this8 = _super15.call(this);
+    _this8.raw = string;
+    return _this8;
   }
 
   _createClass(Raw, [{
@@ -580,15 +616,15 @@ var Raw = /*#__PURE__*/function (_SQLObject6) {
   return Raw;
 }(SQLObject);
 
-var Query = /*#__PURE__*/function (_SQLObject7) {
-  _inherits(Query, _SQLObject7);
+var Query = /*#__PURE__*/function (_SQLObject8) {
+  _inherits(Query, _SQLObject8);
 
-  var _super15 = _createSuper(Query);
+  var _super16 = _createSuper(Query);
 
   function Query() {
     _classCallCheck(this, Query);
 
-    return _super15.apply(this, arguments);
+    return _super16.apply(this, arguments);
   }
 
   return Query;
@@ -597,34 +633,34 @@ var Query = /*#__PURE__*/function (_SQLObject7) {
 var Select = /*#__PURE__*/function (_Query) {
   _inherits(Select, _Query);
 
-  var _super16 = _createSuper(Select);
+  var _super17 = _createSuper(Select);
 
   function Select() {
-    var _this8;
+    var _this9;
 
     _classCallCheck(this, Select);
 
-    _this8 = _super16.call(this);
-    _this8.tables = [];
-    _this8.joins = [];
-    _this8.conditions = new Conjunction();
-    _this8.having_conditions = new Conjunction();
-    _this8.preconditions = new Conjunction();
-    _this8.aggregations = [];
-    _this8.select_list = [];
-    _this8.order_expressions = [];
-    _this8.request_totals = undefined;
-    _this8.sampling = undefined;
-    _this8.limits = undefined;
-    _this8.limitbycolumns = undefined;
-    _this8.fmt = undefined;
-    return _this8;
+    _this9 = _super17.call(this);
+    _this9.tables = [];
+    _this9.joins = [];
+    _this9.conditions = new Conjunction();
+    _this9.having_conditions = new Conjunction();
+    _this9.preconditions = new Conjunction();
+    _this9.aggregations = [];
+    _this9.select_list = [];
+    _this9.order_expressions = [];
+    _this9.request_totals = undefined;
+    _this9.sampling = undefined;
+    _this9.limits = undefined;
+    _this9.limitbycolumns = undefined;
+    _this9.fmt = undefined;
+    return _this9;
   }
 
   _createClass(Select, [{
     key: "select",
     value: function select() {
-      var _this9 = this;
+      var _this10 = this;
 
       for (var _len11 = arguments.length, columns = new Array(_len11), _key11 = 0; _key11 < _len11; _key11++) {
         columns[_key11] = arguments[_key11];
@@ -635,7 +671,7 @@ var Select = /*#__PURE__*/function (_Query) {
       }
 
       columns.forEach(function (col) {
-        return _this9.select_list.push(col);
+        return _this10.select_list.push(col);
       });
       return this;
     }
@@ -746,14 +782,14 @@ var Select = /*#__PURE__*/function (_Query) {
   }, {
     key: "groupBy",
     value: function groupBy() {
-      var _this10 = this;
+      var _this11 = this;
 
       for (var _len14 = arguments.length, aggregateExpressions = new Array(_len14), _key14 = 0; _key14 < _len14; _key14++) {
         aggregateExpressions[_key14] = arguments[_key14];
       }
 
       aggregateExpressions.forEach(function (a) {
-        return _this10.aggregations.push(a);
+        return _this11.aggregations.push(a);
       });
       return this;
     }
@@ -789,14 +825,14 @@ var Select = /*#__PURE__*/function (_Query) {
   }, {
     key: "orderBy",
     value: function orderBy() {
-      var _this11 = this;
+      var _this12 = this;
 
       for (var _len16 = arguments.length, expressions = new Array(_len16), _key16 = 0; _key16 < _len16; _key16++) {
         expressions[_key16] = arguments[_key16];
       }
 
       expressions.forEach(function (e) {
-        return _this11.order_expressions.push(e);
+        return _this12.order_expressions.push(e);
       });
       return this;
     }
@@ -912,6 +948,9 @@ var Shortcuts = {
   },
   cast: function cast(thing, t) {
     return new SQLFunction('cast', thing, quoteVal(t));
+  },
+  between: function between(col, left, right) {
+    return new Between(col, left, right);
   }
 };
 

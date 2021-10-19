@@ -10,6 +10,8 @@ const LESS_OR_EQUALS = "<=";
 const LTE = LESS_OR_EQUALS;
 const NOT_EQUALS = "!=";
 const NE = NOT_EQUALS;
+const BETWEEN = "between";
+const AND = 'and'
 
 const Consts = {
   EQUALS,
@@ -23,7 +25,7 @@ const Consts = {
   GTE,
   LT,
   LTE,
-  NE
+  NE,
 };
 
 class SQLObject {
@@ -137,6 +139,32 @@ class GlobalNotIn extends InclusionOperator {
 class GlobalIn extends InclusionOperator {
   constructor(...args) {
     super("global in", ...args);
+  }
+}
+
+class Between extends SQLObject {
+  constructor(column, leftBoundary, rightBoundary) {
+      super();
+      this.column = column;
+
+      this.leftBoundary = leftBoundary;
+      this.rightBoundary = rightBoundary;
+  }
+  quoteBoundary(b) {
+    return b instanceof SQLObject ? b.toString() : quoteVal(b);
+  }
+
+  toString() {
+    return [
+      quoteTerm(this.column),
+      " ",
+      BETWEEN,
+      // because super class adding parents around value and I didn't find an elegant
+      // way how to avoid this. So I'm overloading toString() and copy-pasting implementation
+      this.quoteBoundary(this.leftBoundary),
+      AND,
+      this.quoteBoundary(this.rightBoundary)
+    ].join(' ');
   }
 }
 
@@ -570,6 +598,7 @@ const Shortcuts = {
   in: (col, values) => new In(col, null, values),
   notIn: (col, values) => new NotIn(col, null, values),
   cast: (thing, t) => new SQLFunction('cast', thing, quoteVal(t)),
+  between: (col, left, right) => new Between(col, left, right)
 };
 
 
