@@ -134,4 +134,49 @@ describe('main', function() {
       )
     });
 
+    // This is just for code coverage
+    it('ne/gte/lte/gt/gt bug', () => {
+      const s = Dialect;
+      let selectBuilder = new Dialect.Select();
+
+      const q = selectBuilder
+        .from('table0')
+        .where(s.Or(s.Lt('a', 1), s.Gt('a', 2)))
+        .where(s.And(s.notIn('b', [1,2,3]), s.Lte('c', 1)))
+        .where(s.Ne('a', s.term('c')))
+        .where(s.Gte('c', 1.004))
+        .toString();
+
+      equalsIgnoringWhitespaces(
+        q,
+        "select * from `table0` where " +
+        "( (`a`<1) or (`a` > 2) ) and " +
+        "( (`b` notin (1,2,3) ) and (`c`<=1) ) and " +
+        "( `a` != `c` ) and " +
+        "( `c` >= 1.004 ) "
+      );
+    });
+
+    it('gt bug', () => {
+        const s = Dialect;
+        const q =  s.Gt('a', 2).toString();
+
+        equalsIgnoringWhitespaces(
+          q,
+          "`a` > 2"
+        );
+
+    });
+
+    it('quoteVal', () => {
+      assert.equal(
+        Dialect.quoteVal("indi\n\tfference").toString(),
+        "'indi\\n\\tfference'"
+      );
+      assert.equal(
+        Dialect.quoteVal("despai'r").toString(),
+        "'despai''r'"
+      );
+
+    })
 });

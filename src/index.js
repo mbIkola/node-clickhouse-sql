@@ -159,7 +159,7 @@ function createCondition(...args) {
 }
 
 let commonReplacer = [
-  /[\0\n\r\b\t\\'"\x1a]/g, (s) => {
+  /[\0\n\r\b\t\\\x1a]/g, (s) => {
     switch (s) {
       case "\0":
         return "\\0";
@@ -175,6 +175,8 @@ let commonReplacer = [
         return "\\\\";
       case "\x1a" :
         return "\\Z";
+      default:
+        console.error("uncovered case in replacer:", s); return ''; //logic error
     }
   }
 ];
@@ -564,7 +566,7 @@ const Shortcuts = {
   Gte: (col, val) => new Condition(col, Consts.GTE, val),
   Lte: (col, val) => new Condition(col, Consts.LTE, val),
   Lt: (col, val) => new Condition(col, Consts.LT, val),
-  Gt: (col, val) => new Conjunction(col, Consts.GT, val),
+  Gt: (col, val) => new Condition(col, Consts.GT, val),
   in: (col, values) => new In(col, null, values),
   notIn: (col, values) => new NotIn(col, null, values),
   cast: (thing, t) => new SQLFunction('cast', thing, quoteVal(t)),
