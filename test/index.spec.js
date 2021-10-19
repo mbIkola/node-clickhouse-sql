@@ -178,5 +178,47 @@ describe('main', function() {
         "'despai''r'"
       );
 
+    });
+
+    it('between values', () => {
+
+      // https://github.com/mbIkola/node-clickhouse-sql/issues/24
+      //SELECT count() AS count
+      //FROM tracking_events
+      //WHERE date BETWEEN '12-01-2017' AND '12-01-2018'
+      const query =  new Dialect.Select();
+      const between = Dialect.between;
+      equalsIgnoringWhitespaces(
+          query
+            .from('tracking_events')
+            .select([Dialect.count(), 'count'])
+            .where(between('date', '12-01-2017', '12-01-2018'))
+            .toString(),
+        "select count() as `count` from `tracking_events` where (`date` between '12-01-2017' and '12-01-2018')"
+      );
+
+    });
+
+  it('between terms', () => {
+    const query =  new Dialect.Select();
+    const col = Dialect.quoteTerm;
+    const between = Dialect.between;
+    equalsIgnoringWhitespaces(
+      query
+        .from('tracking_events')
+        .select([Dialect.count(), 'hope'], 'despair', 'indifference')
+        .where(between('hope', col('despair'), col('indifference')))
+        .toString(),
+      "select count() as `hope`, `despair`, `indifference` from `tracking_events`" +
+      " where (`hope` between `despair` and `indifference`)"
+    );
+  });
+
+    it('conjunction', () => {
+      const quote = Dialect.quoteVal;
+      const s = new Dialect.Conjunction(quote('12-01-2017'), quote('12-01-2018'));
+
+      assert.equal(Dialect.quoteVal('12-01-2017'), "'12-01-2017'");
+      assert.equal(s.toString(), "('12-01-2017') and ('12-01-2018')");
     })
 });
