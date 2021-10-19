@@ -835,7 +835,7 @@ var Select = /*#__PURE__*/function (_Query) {
       var limitby = this.limitbycolumns && this.limitbycolumns.columns.length ? "limit " + this.limitbycolumns.limit + " by " + this.limitbycolumns.columns.map(function (c) {
         return quoteTerm(c);
       }).join() : '';
-      var limit = this.limits ? "limit " + this.limits.number + (typeof this.limits.offset === "undefined" ? "" : "," + this.limits.offset) : '';
+      var limit = this.limits ? "limit " + (typeof this.limits.offset === "undefined" ? this.limits.number : this.limits.offset + ", " + this.limits.number) : '';
       var format = this.fmt ? " format " + this.fmt.toUpperCase() : "";
       var parts = ["select", select_list, from, join, sample, prewhere, where, groupby, with_totals, having, order_by, limitby, limit, format].filter(function (v) {
         return v != '';
