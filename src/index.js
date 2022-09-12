@@ -277,12 +277,15 @@ const _curry_f = (name) => {
 
 const AggregateFunctions = {
   count: _curry_f('count'),
+  countIf: _curry_f('countIf'),
   any: _curry_f('any'),
   anyLast: _curry_f('anyLast'),
   min: _curry_f('min'),
   max: _curry_f('max'),
   sum: _curry_f('sum'),
+  sumIf: _curry_f('sumIf'),
   avg: _curry_f('avg'),
+  avgIf: _curry_f('avgIf'),
   uniq: _curry_f('uniq'),
   uniqCombined: _curry_f('uniqCombined'),
   uniqHLL12: _curry_f('uniqHLL12'),
