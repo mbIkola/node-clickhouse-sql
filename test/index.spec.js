@@ -27,6 +27,7 @@ describe('main', function() {
           s.avg('avgReward'),
           s.max('netDiff'),
           s.min('netDiff'),
+          [s.countIf(s.Condition('total', s.GREATER, s.val(0))), 'positive totals'],
           [s.sum(s.multiply(s.multiply('hashes', s.divide('blockReward', 'netDiff')), 0.8)), 'approx reward in XMR']
         )
         .join('foo', 'left', s.Condition('col1', s.EQ, s.quoteTerm('col2')))
@@ -48,6 +49,7 @@ describe('main', function() {
         "uniq(`minerId`),sum(`cpuTime`),sum(`hashes`)," +
         "divide(sum(`hashes`),60) as `hashrate`,avg(`blockReward`)," +
         "avg(`avgReward`),max(`netDiff`),min(`netDiff`)," +
+        "countIf(`total` > 0) as `positive totals`," + 
         "sum(multiply(multiply(`hashes`,divide(`blockReward`,`netDiff`)),0.8)) as `approx reward in XMR` " +
         "from `solved_hashes`   " +
         "leftjoin`foo`on`col1`=`col2`" +
