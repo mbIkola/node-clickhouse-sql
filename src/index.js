@@ -12,6 +12,7 @@ const NOT_EQUALS = "!=";
 const NE = NOT_EQUALS;
 const BETWEEN = "between";
 const AND = 'and'
+const LIKE = 'like'
 
 const Consts = {
   EQUALS,
@@ -26,6 +27,7 @@ const Consts = {
   LT,
   LTE,
   NE,
+  LIKE,
 };
 
 class SQLObject {
@@ -601,7 +603,8 @@ const Shortcuts = {
   in: (col, values) => new In(col, null, values),
   notIn: (col, values) => new NotIn(col, null, values),
   cast: (thing, t) => new SQLFunction('cast', thing, quoteVal(t)),
-  between: (col, left, right) => new Between(col, left, right)
+  between: (col, left, right) => new Between(col, left, right),
+  like: (col, val) =>new Condition(col, Consts.LIKE, val),
 };
 
 
